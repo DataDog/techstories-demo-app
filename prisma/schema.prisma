@@ -1,0 +1,64 @@
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-1.1.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id           String            @id @default(cuid())
+    name         String
+    email        String            @unique
+    posts        Post[]
+    comments     Comment[]
+    postVotes    VotesOnPosts[]
+    commentVotes VotesOnComments[]
+}
+
+model Post {
+    id        String         @id @default(cuid())
+    title     String
+    content   String
+    slug      String         @unique
+    createdAt DateTime       @default(now())
+    author    User           @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    authorId  String
+    comments  Comment[]
+    votes     VotesOnPosts[]
+}
+
+model Comment {
+    id        String            @id @default(cuid())
+    content   String
+    createdAt DateTime          @default(now())
+    author    User              @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    authorId  String
+    post      Post              @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    postId    String
+    votes     VotesOnComments[]
+}
+
+model VotesOnPosts {
+    id        String   @id @default(cuid())
+    user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    userId    String
+    post      Post?    @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    postId    String?
+    createdAt DateTime @default(now())
+
+    @@unique([userId, postId])
+}
+
+model VotesOnComments {
+    id        String   @id @default(cuid())
+    user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    userId    String
+    comment   Comment? @relation(fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    commentId String?
+    createdAt DateTime @default(now())
+
+    @@unique([userId, commentId])
+}
