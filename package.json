@@ -13,7 +13,7 @@
     "db-prep": "yarn db-create && yarn db-seed && yarn postinstall",
     "test": "NODE_OPTIONS=\"--max-old-space-size=12288 ${NODE_OPTIONS:-}\" jest",
     "test:watch": "jest --watch",
-    "test:ci": "NODE_OPTIONS=\"--max-old-space-size=12288 ${NODE_OPTIONS:-}\" jest --ci --coverage --collectCoverageFrom=src/**/*.{ts,tsx}",
+    "test:ci": "NODE_OPTIONS=\"--max-old-space-size=12288 ${NODE_OPTIONS:-}\" jest --ci --detectOpenHandles --coverage --collectCoverageFrom=src/**/*.{ts,tsx}",
     "e2e": "cypress open --e2e",
     "e2e:headless": "start-server-and-test 'yarn dev' 3000 'cypress run --e2e'",
     "component": "cypress open --component",
