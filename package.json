@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--require dd-trace/init' next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start",
+    "start": "NODE_OPTIONS='--require dd-trace/init' next start",
     "db-create": "prisma db push --schema=prisma/schema.prisma",
     "db-seed": "NODE_ENV=development prisma db seed",
     "db-prep": "yarn db-create && yarn db-seed && yarn postinstall",

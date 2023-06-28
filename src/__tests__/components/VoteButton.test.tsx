@@ -35,4 +35,14 @@ describe("VoteButton", () => {
     expect(enabledButton).not.toBeDisabled();
     expect(enabledButton).not.toHaveClass("cursor-not-allowed");
   });
+
+  // test rotates the button after add vote is clicked
+  test("rotates the button after add vote is clicked", () => {
+    render(<VoteButton voteType="add" onClick={jest.fn()} />);
+    const voteButton = screen.getByRole("button", { name: /add vote/i });
+    expect(voteButton).not.toHaveClass("rotate-180");
+
+    fireEvent.click(voteButton);
+    expect(voteButton).toHaveClass("rotate-180");
+  });
 });
