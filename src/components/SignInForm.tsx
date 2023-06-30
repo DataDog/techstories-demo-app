@@ -27,7 +27,6 @@ export const SignInForm = () => {
       });
 
       if (result?.error) {
-        console.error(result.error);
         setError(true);
         return;
       }
