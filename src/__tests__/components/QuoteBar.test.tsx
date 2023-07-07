@@ -9,10 +9,14 @@ describe("QuoteBar", () => {
   });
 
   test("fetches quote from API", async () => {
+    const URL = process.env.NEXT_PUBLIC_QUOTES_API_URL
+      ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
+      : "http://localhost:3001/quote";
+
     render(<QuoteBar />);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith("http://localhost:3001/quote");
+      expect(fetch).toHaveBeenCalledWith(URL);
     });
   });
 
