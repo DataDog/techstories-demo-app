@@ -9,8 +9,9 @@ export const QuoteBar = () => {
 
   const getQuote = async () => {
     try {
-      const url =
-        process.env.NEXT_PUBLIC_QUOTES_API_URL || "http://localhost:3001/quote";
+      const url = process.env.NEXT_PUBLIC_QUOTES_API_URL
+        ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
+        : "http://localhost:3001/quote";
       const response = await fetch(url);
       const data = await response.json();
       setQuote(data.quote);
