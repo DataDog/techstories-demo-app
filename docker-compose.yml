@@ -11,3 +11,11 @@ services:
       - ./db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  quotes_api:
+    build: ./services/quotes_api
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+    command: npm run start
