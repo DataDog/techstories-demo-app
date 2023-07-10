@@ -2,35 +2,34 @@ import { useEffect, useState } from "react";
 
 export const QuoteBar = () => {
   const [quote, setQuote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getQuote();
   }, []);
 
   const getQuote = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const url = process.env.NEXT_PUBLIC_QUOTES_API_URL
-        ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
-        : "http://localhost:3001/quote";
-      const response = await fetch(url);
+      const response = await fetch("http://localhost:3001/quote");
       const data = await response.json();
       setQuote(data.quote);
     } catch (error) {
-      console.log(error);
+      setError("Failed to fetch quote");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="w-full bg-neutral-300">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-2 py-4">
-        <div className="italic">{quote}</div>
-        <button
-          onClick={getQuote}
-          className="rounded-md bg-neutral-100 px-2 py-1 text-sm hover:bg-neutral-500 hover:text-neutral-100"
-        >
-          Get a new quote
-        </button>
+      <div className="mx-auto max-w-4xl p-2">
+        {loading ? "Loading..." : error || quote}
       </div>
     </div>
   );
 };
+
+export default QuoteBar;

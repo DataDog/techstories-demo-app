@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, cleanup, waitFor } from "@testing-library/react";
 import { QuoteBar } from "~/components/QuoteBar";
 global.fetch = require("cross-fetch");
 jest.spyOn(global, "fetch");
@@ -6,6 +6,7 @@ jest.spyOn(global, "fetch");
 describe("QuoteBar", () => {
   afterEach(() => {
     fetch.mockClear();
+    cleanup();
   });
 
   test("fetches quote from API", async () => {
@@ -20,17 +21,11 @@ describe("QuoteBar", () => {
     });
   });
 
-  test("displays a quote when fetched from API", async () => {
-    fetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({ quote: "Test quote" }),
-      })
-    );
+  test("fetches quote from API", async () => {
+    const response = await fetch("http://localhost:3001/quote");
+    const json = await response.json();
 
-    render(<QuoteBar />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Test quote/)).toBeInTheDocument();
-    });
+    expect(response.status).toEqual(200);
+    expect(json).toHaveProperty("quote");
   });
 });

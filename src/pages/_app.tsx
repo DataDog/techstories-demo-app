@@ -28,7 +28,6 @@ datadogRum.init({
   site: "datadoghq.com",
   service: process.env.NEXT_PUBLIC_DD_SERVICE_NAME || "ci-test-visibility",
   env: process.env.NEXT_PUBLIC_DD_ENV || "development",
-  // Specify a version number to identify the deployed version of your application in Datadog
   version: process.env.NEXT_PUBLIC_DD_VERSION || "1.0.0",
   sessionSampleRate: 100,
   sessionReplaySampleRate: 100,
