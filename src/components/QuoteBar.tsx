@@ -13,7 +13,10 @@ export const QuoteBar = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:3001/quote");
+      const URL = process.env.NEXT_PUBLIC_QUOTES_API_URL
+        ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
+        : "http://localhost:3001/quote";
+      const response = await fetch(URL);
       const data = await response.json();
       setQuote(data.quote);
     } catch (error) {
