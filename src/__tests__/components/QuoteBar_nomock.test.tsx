@@ -22,7 +22,10 @@ describe("QuoteBar", () => {
   });
 
   test("fetches quote from API", async () => {
-    const response = await fetch("http://localhost:3001/quote");
+    const URL = process.env.NEXT_PUBLIC_QUOTES_API_URL
+      ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
+      : "http://localhost:3001/quote";
+    const response = await fetch(URL);
     const json = await response.json();
 
     expect(response.status).toEqual(200);
