@@ -6,13 +6,7 @@ import { Header } from "~/components/Header";
 // mock next-auth
 jest.mock("next-auth/react", () => ({
   useSession: jest.fn(() => ({
-    data: {
-      user: {
-        name: "test user",
-        email: "name@example.com",
-        id: "1",
-      },
-    },
+    data: null,
   })),
   signIn: jest.fn(),
   signOut: jest.fn(),
