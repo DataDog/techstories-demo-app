@@ -8,10 +8,9 @@ jest.mock("next-auth/react", () => ({
   useSession: jest.fn(() => ({
     data: {
       user: {
-        name: "test",
+        name: "test user",
         email: "name@example.com",
         id: "1",
-        image: "https://example.com/image.png",
       },
     },
   })),
@@ -55,10 +54,9 @@ describe("Header", () => {
     (useSession as jest.Mock).mockReturnValueOnce({
       data: {
         user: {
-          name: "test",
+          name: "test user",
           email: "name@example.com",
           id: "1",
-          image: "https://example.com/image.png",
         },
       },
     });
@@ -70,15 +68,15 @@ describe("Header", () => {
     expect(signOut).toHaveBeenCalledTimes(1);
   });
 
-  test("renders the user's name when signed in", () => {
-    process.env.ISLOGGEDOUT === "true" &&
+  test("ensures authorized member's name is displayed", () => {
+    process.env.TECHSTORIES_AUTH === "false" &&
       (useSession as jest.Mock).mockReturnValueOnce({
         data: null,
       });
 
     render(<Header />);
 
-    const name = screen.getByText(/test/i);
+    const name = screen.getByText(/test user/i);
     expect(name).toBeInTheDocument();
   });
 });
