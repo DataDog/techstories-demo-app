@@ -8,6 +8,9 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jest-environment-jsdom",
+  transform: {
+    "^.+\\.jsx?$": "babel-jest",
+  },
   moduleNameMapper: {
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
     "^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$":

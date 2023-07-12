@@ -71,8 +71,7 @@ describe("Header", () => {
   });
 
   test("renders the user's name when signed in", () => {
-    // half of the time, clear the session
-    Math.random() < 0.5 &&
+    process.env.ISLOGGEDOUT === "true" &&
       (useSession as jest.Mock).mockReturnValueOnce({
         data: null,
       });
