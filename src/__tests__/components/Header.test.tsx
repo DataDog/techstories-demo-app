@@ -19,6 +19,10 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("Header", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("renders the header title", () => {
     render(<Header />);
 
@@ -69,9 +73,15 @@ describe("Header", () => {
   });
 
   test("ensures authorized member's name is displayed", () => {
-    process.env.TECHSTORIES_AUTH === "false" &&
+    process.env.TECHSTORIES_AUTH === "true" &&
       (useSession as jest.Mock).mockReturnValueOnce({
-        data: null,
+        data: {
+          user: {
+            name: "test user",
+            email: "name@example.com",
+            id: "1",
+          },
+        },
       });
 
     render(<Header />);
