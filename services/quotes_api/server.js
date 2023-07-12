@@ -26,8 +26,8 @@ const quotes = [
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
 
-  // add 1 in 20 chance of error
-  if (Math.random() < 0.05) {
+  // 1 in 200 chance of error
+  if (Math.random() < 0.005) {
     console.log("Error: 500");
     res.status(500).json({ error: "Internal Server Error" });
     return;
@@ -35,8 +35,8 @@ app.get("/quote", async (req, res) => {
 
   // add 1 in 20 chance of delay
   if (Math.random() < 0.05) {
-    console.log("Delay: 5000");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    console.log("Delay: 3000");
+    await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 
   res.json({ quote: quotes[randomIndex] });
