@@ -33,8 +33,8 @@ app.get("/quote", async (req, res) => {
     return;
   }
 
-  // add 1 in 5 chance of delay
-  if (Math.random() < 0.2) {
+  // add 1 in 20 chance of delay
+  if (Math.random() < 0.05) {
     console.log("Delay: 5000");
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
