@@ -72,7 +72,7 @@ describe("Header", () => {
     expect(signOut).toHaveBeenCalledTimes(1);
   });
 
-  test("Header renders the user's name when signed in", () => {
+  test("renders the user's name when signed in", () => {
     process.env.TECHSTORIES_AUTH === "true" &&
       (useSession as jest.Mock).mockReturnValueOnce({
         data: {
