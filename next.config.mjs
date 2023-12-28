@@ -18,6 +18,7 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  productionBrowserSourceMaps: true,
   webpack(config, options) {
     return config;
   },
