@@ -23,6 +23,13 @@ TechStories is a simple web application that allows users to post stories about 
 - [Node.js](https://nodejs.org/en/)
   - [Express](https://expressjs.com/)
 
+### Datadog features used
+
+**Frontend Service**
+- CI Test Visibility
+- RUM
+- APM
+
 ## How do I run TechStories?
 
 TechStories is designed to be run directly on the host machine, as it was primarily built to demonstrate Datadog CI Test Visibility, but its other services can be run in containers using Docker Compose.
