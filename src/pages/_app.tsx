@@ -38,8 +38,6 @@ datadogRum.init({
   defaultPrivacyLevel: "mask-user-input",
 });
 
-datadogRum.startSessionReplayRecording();
-
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
