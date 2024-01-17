@@ -21,7 +21,7 @@ const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   return (
     <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
-      <p>{sessionData && <span>Hi, {sessionData.user?.name}!</span>}</p>
+      <p>{sessionData && <span>Hi, {sessionData.user.name}!</span>}</p>
       <Link
         href="/posts/new"
         className="bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"

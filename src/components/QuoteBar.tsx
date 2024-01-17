@@ -17,9 +17,15 @@ export const QuoteBar = () => {
         ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
         : "http://localhost:3001/quote";
       const response = await fetch(URL);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch quote");
+      }
+
       const data = await response.json();
       setQuote(data.quote);
     } catch (error) {
+      console.error(error);
       setError("Failed to fetch quote");
     } finally {
       setLoading(false);

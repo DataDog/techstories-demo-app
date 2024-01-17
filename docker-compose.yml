@@ -1,5 +1,46 @@
 version: '3.7'
 services:
+  datadog:
+    image: gcr.io/datadoghq/agent:7.43.1
+    environment:
+      - DD_API_KEY
+      - DD_HOSTNAME
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_CONTAINER_LABELS_AS_TAGS={"my.custom.label.team":"team"}
+      - DD_TAGS=${DD_TAGS-env:local-env}
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_SYSTEM_PROBE_NETWORK_ENABLED=true
+      - DD_SYSTEM_PROBE_SERVICE_MONITORING_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED=true
+      - HOST_ROOT='/host/root'
+    pid: "host"
+    ports:
+      - "8126:8126/tcp"
+      - "8125:8125/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /:/host/root:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /etc/os-release:/etc/os-release
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - SYS_PTRACE
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+      - IPC_LOCK
+      - CHOWN
+    security_opt:
+      - apparmor:unconfined
   db:
     image: postgres:12.2
     restart: always
@@ -9,13 +50,28 @@ services:
       POSTGRES_DB: db
     volumes:
       - ./db_data:/var/lib/postgresql/data
+      - ./services/db/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
       - "5432:5432"
   quotes_api:
     build: ./services/quotes_api
+    command: npm run watch
     restart: always
     ports:
       - "3001:3001"
     environment:
       - PORT=3001
-    command: npm run start
+      - DD_ENV=${DD_ENV}
+      - DD_SERVICE=quotes-api
+      - DD_LOGS_INJECTION=true
+      - DD_TRACE_SAMPLE_RATE="1"
+      - DD_PROFILING_ENABLED=true
+      - DD_AGENT_HOST=datadog
+    volumes:
+      - ./services/quotes_api/server.js:/app/server.js
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api", "sourcecategory": "sourcecode", "path": "app-logs.log" }]'
+      com.datadoghq.tags.env: '${DD_ENV}'
+      com.datadoghq.tags.service: 'quotes-api'
+      com.datadoghq.tags.version: '1.0.0'
+      my.custom.label.team: 'api-team'

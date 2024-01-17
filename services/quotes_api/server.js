@@ -2,6 +2,15 @@ const tracer = require("dd-trace").init();
 const express = require("express");
 const cors = require("cors");
 
+const { createLogger, format, transports } = require("winston");
+
+const logger = createLogger({
+  level: "info",
+  exitOnError: false,
+  format: format.json(),
+  transports: [new transports.File({ filename: `${__dirname}/app-logs.log` })],
+});
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -26,10 +35,9 @@ const quotes = [
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
 
-  // 1 in 200 chance of error
-  if (Math.random() < 0.005) {
+  if (Math.random() < 0.5) {
     console.log("Error: 500");
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).send("Internal Server Error");
     return;
   }
 
@@ -45,3 +53,5 @@ app.get("/quote", async (req, res) => {
 app.listen(port, () => {
   console.info(`Server is running at http://localhost:${port}`);
 });
+
+module.exports = logger;

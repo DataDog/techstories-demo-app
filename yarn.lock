@@ -1025,32 +1025,32 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@datadog/browser-core@4.43.0":
-  version "4.43.0"
-  resolved "https://registry.npmjs.org/@datadog/browser-core/-/browser-core-4.43.0.tgz"
-  integrity sha512-sign974DvQxSE2BnCtPpHiHI9+MgXq35Gb/I5YcdpdWh5HczgMNIzNWWXTxrkrfkft6+z1M/6AM62yqofeYqog==
+"@datadog/browser-core@5.8.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-core/-/browser-core-5.8.0.tgz#912cad282651160398f2c088a796724f40e404a8"
+  integrity sha512-aNMSB+tLu5aKm/uzswy5d6KDgGtMs2uMxsGWdZ3lmqorEHLXk5kPNTEVRJfeE49EJaWaxiTYQuuuLo0c5S0rUA==
 
-"@datadog/browser-logs@^4.43.0":
-  version "4.43.0"
-  resolved "https://registry.npmjs.org/@datadog/browser-logs/-/browser-logs-4.43.0.tgz"
-  integrity sha512-yFx3kWQ/geRfTOVymHVFa9u8WkFYbLYW2s9YcHdnLCkBFWV/gNfyDyjx41eYeAbvqe8G7lQd40+MaazSG6rOpw==
+"@datadog/browser-logs@^5.0.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-logs/-/browser-logs-5.8.0.tgz#288a5cad014db82801eb1dc7174dac8f8865b264"
+  integrity sha512-7UnLrYEICdY4KLGct9q88f5Xxaad+47He1H7PPnfj1p6HDHtadjRYxb/+NQxoezWFLDpqIIgQgqr4GDQYgtOFQ==
   dependencies:
-    "@datadog/browser-core" "4.43.0"
+    "@datadog/browser-core" "5.8.0"
 
-"@datadog/browser-rum-core@4.43.0":
-  version "4.43.0"
-  resolved "https://registry.npmjs.org/@datadog/browser-rum-core/-/browser-rum-core-4.43.0.tgz"
-  integrity sha512-x9QYLbOnoDId9oVGOGSxS1lZoQ8I6ZujmEt8OWvJ+jykdaKdqzyh3cv0euBzfWj+fCtZP8yrSXUZ+0zpSY4f1A==
+"@datadog/browser-rum-core@5.8.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum-core/-/browser-rum-core-5.8.0.tgz#ce6918835644c27f9b6df8ba86078897de59c7eb"
+  integrity sha512-UtWVR7z8qXvt0Ik10KjjG6Ueck1JLOXcfY00Vv2TttQ73hepL1NUlSDjdMyobySc/990ROvWkCYTIvhtqWFDFw==
   dependencies:
-    "@datadog/browser-core" "4.43.0"
+    "@datadog/browser-core" "5.8.0"
 
-"@datadog/browser-rum@^4.42.2":
-  version "4.43.0"
-  resolved "https://registry.npmjs.org/@datadog/browser-rum/-/browser-rum-4.43.0.tgz"
-  integrity sha512-Cc4e3kViyarfZVwZx4vWHj2/wwyhCF2/KDeWCq+Aa31om5FwP+lzhVfFnxq0711SkhZ8XXa2JjjQb5x4g3B1bw==
+"@datadog/browser-rum@^5.0.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum/-/browser-rum-5.8.0.tgz#3feb0d1bcb526821f1be88da36353ed20b85dcc5"
+  integrity sha512-WtWRQa41d/G4TRs4PwbMM82i56Fsjov9b/B1go0ocqIqUkaJYdTBqQCIcJo3xmCZrgmxSlPiPgEgB5shhVDXxA==
   dependencies:
-    "@datadog/browser-core" "4.43.0"
-    "@datadog/browser-rum-core" "4.43.0"
+    "@datadog/browser-core" "5.8.0"
+    "@datadog/browser-rum-core" "5.8.0"
 
 "@datadog/native-appsec@^3.2.0":
   version "3.2.0"
