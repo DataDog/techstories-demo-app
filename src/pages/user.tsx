@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 const User: NextPage = () => {
   const { data: sessionData } = useSession();
   const { data: posts } = api.post.getPosts.useQuery();
+  console.log(posts);
 
   const renderUserData = () => {
     for (let i = 0; i < posts.length; i++) {
