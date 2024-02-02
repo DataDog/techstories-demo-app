@@ -1,20 +1,13 @@
 const tracer = require("dd-trace").init();
 const express = require("express");
+const logger = require("pino-http")();
 const cors = require("cors");
-
-const { createLogger, format, transports } = require("winston");
-
-const logger = createLogger({
-  level: "info",
-  exitOnError: false,
-  format: format.json(),
-  transports: [new transports.File({ filename: `${__dirname}/app-logs.log` })],
-});
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors());
+app.use(logger);
 
 const quotes = [
   '"Why don\'t programmers like nature? It has too many bugs." - Jonny Java',
@@ -35,15 +28,15 @@ const quotes = [
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
 
-  if (Math.random() < 0.5) {
-    console.log("Error: 500");
+  if (Math.random() < 0.05) {
+    req.log.error("Internal Server Error");
     res.status(500).send("Internal Server Error");
     return;
   }
 
   // add 1 in 20 chance of delay
   if (Math.random() < 0.05) {
-    console.log("Delay: 3000");
+    req.log.warn("Request delayed by 3 seconds");
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 

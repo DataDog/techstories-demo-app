@@ -25,6 +25,36 @@ services:
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
     networks:
       - techstories-net
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bash -c "wait-for-it db:5432 -- npm run db-prep && npm run dev"
+    depends_on:
+      - db
+      - datadog
+    environment:
+      - PORT=3000
+      - DD_ENV=${DD_ENV-local-env}
+      - DD_SERVICE=${DD_SERVICE-techstories-web}
+      - DD_VERSION=${DD_VERSION-1.0.0}
+      - DD_LOGS_INJECTION=true
+      - DD_TRACE_SAMPLE_RATE="1"
+      - DD_PROFILING_ENABLED=true
+      - DD_AGENT_HOST=datadog
+    volumes:
+      - .:/usr/src/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "techstories-web", "auto_multi_line_detection":true}]'
+      com.datadoghq.tags.env: '${DD_ENV-local-env}'
+      com.datadoghq.tags.service: '${DD_SERVICE-techstories-web}'
+      com.datadoghq.tags.version: '${DD_VERSION-1.0.0}'
+      my.custom.label.team: 'web-team'
+    networks:
+      - techstories-net
   db:
     image: postgres:13-alpine
     restart: always

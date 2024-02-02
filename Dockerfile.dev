@@ -1,0 +1,24 @@
+# Use a Node.js base image
+FROM node:20
+
+RUN apt-get update \
+  && apt-get install -y curl
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install the wait-for-it script
+RUN curl -sS https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /usr/local/bin/wait-for-it \
+  && chmod +x /usr/local/bin/wait-for-it
+
+# Install app dependencies
+COPY package*.json ./
+
+RUN npm install
+RUN npm install -g @datadog/datadog-ci
+
+# Bundle app source
+COPY . .
+
+# Expose port 3000
+EXPOSE 3000

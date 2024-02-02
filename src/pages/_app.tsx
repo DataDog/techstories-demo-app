@@ -31,29 +31,46 @@ datadogRum.init({
   service: process.env.NEXT_PUBLIC_DD_SERVICE_NAME || "techstories-web",
   env: process.env.NEXT_PUBLIC_DD_ENV || "development",
   version: process.env.NEXT_PUBLIC_DD_VERSION || "1.0.0",
-  sessionSampleRate: 100,
-  sessionReplaySampleRate: 100,
   trackUserInteractions: true,
   trackResources: true,
   trackLongTasks: true,
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 100,
+  silentMultipleInit: true,
+  defaultPrivacyLevel: "mask",
   allowedTracingUrls: [
-    /https:\/\/.*\.env.play.instruqt\.com/,
-    /^http:\/\/localhost(:\d+)?$/,
+    {
+      match: /https:\/\/.*\.env.play.instruqt\.com/,
+      propagatorTypes: ["tracecontext", "datadog", "b3", "b3multi"],
+    },
+    {
+      match: /^http:\/\/localhost(:\d+)?$/,
+      propagatorTypes: ["tracecontext", "datadog", "b3", "b3multi"],
+    },
+    {
+      match: /.*/,
+      propagatorTypes: ["tracecontext", "datadog", "b3", "b3multi"],
+    },
   ],
-  defaultPrivacyLevel: "mask-user-input",
+  traceSampleRate: 100,
+  allowUntrustedEvents: true,
 });
 
 const SessionWatcher = () => {
   const { data: sessionData } = useSession();
   useEffect(() => {
     if (sessionData) {
-      console.log(sessionData);
+      // check if user is already set
+      if (datadogRum.getUser().id) {
+        console.log("User already set");
+        return;
+      }
+
       datadogRum.setUser({
         id: sessionData.user.id,
         name: sessionData.user.name,
         email: sessionData.user.email,
       });
-      console.log(datadogRum.getUser());
     }
   }, [sessionData]);
 
