@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 services:
   datadog:
     image: gcr.io/datadoghq/agent:latest
@@ -43,12 +43,12 @@ services:
     ports:
       - "5432:5432"
     labels:
-      com.datadoghq.tags.env: '${DD_ENV}'
-      com.datadoghq.tags.service: 'database'
-      com.datadoghq.tags.version: '13'
-      my.custom.label.team: 'database'
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "database"
+      com.datadoghq.tags.version: "13"
+      my.custom.label.team: "database"
       com.datadoghq.ad.check_names: '["postgres", "postgres"]'
-      com.datadoghq.ad.init_configs: '[{}, {}]'
+      com.datadoghq.ad.init_configs: "[{}, {}]"
       com.datadoghq.ad.instances: '[{"host":"%%host%%", "port":5432,"username":"datadog","password":"datadog"}]'
       com.datadoghq.ad.logs: '[{"source": "postgresql", "service": "postgres"}]'
     networks:
@@ -71,10 +71,10 @@ services:
       - ./services/quotes_api/server.js:/app/server.js
     labels:
       com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
-      com.datadoghq.tags.env: '${DD_ENV}'
-      com.datadoghq.tags.service: 'quotes-api'
-      com.datadoghq.tags.version: '1.0.0'
-      my.custom.label.team: 'api-team'
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "quotes-api"
+      com.datadoghq.tags.version: "1.0.0"
+      my.custom.label.team: "api-team"
     networks:
       - techstories-net
 
@@ -83,4 +83,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.43.0.0/16
+        - subnet: 172.44.0.0/16

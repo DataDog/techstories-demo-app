@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 
+import ErrorBoundary from "~/components/ErrorBoundary";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -83,9 +85,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <SessionWatcher />
       <div className={`${inter.variable} font-sans`}>
-        <Component {...pageProps} />
+        <SessionWatcher />
+        <ErrorBoundary>
+          <Component {...pageProps} />
+        </ErrorBoundary>
       </div>
     </SessionProvider>
   );

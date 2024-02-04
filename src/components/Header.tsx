@@ -29,6 +29,13 @@ const Auth: React.FC = () => {
         {" "}
         + New Post
       </Link>
+      <Link
+        href="/user"
+        className="bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
+      >
+        {" "}
+        User
+      </Link>
       <button
         className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
         onClick={sessionData ? () => void signOut() : () => void signIn()}

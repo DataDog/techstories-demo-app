@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "NODE_OPTIONS='--require dd-trace/init --require next-logger' next dev",
+    "dev": "DD_ENV=${DD_ENV} DD_SERVICE=techstories-web NODE_OPTIONS='--require dd-trace/init --require next-logger' next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "NODE_OPTIONS='--require dd-trace/init --require next-logger' next start",
+    "start": "DD_ENV=${DD_ENV} DD_SERVICE=techstories-web NODE_OPTIONS='--require dd-trace/init --require next-logger' next start",
     "db-create": "prisma db push --schema=prisma/schema.prisma",
     "db-seed": "NODE_ENV=development prisma db seed",
     "db-prep": "npm run db-create && npm run db-seed && npm run postinstall",
