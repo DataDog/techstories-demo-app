@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import MainLayout from "~/layouts/MainLayout";
 import PostListItem from "~/components/PostListItem";
@@ -36,7 +37,7 @@ const User: NextPage = () => {
   return (
     <MainLayout pageTitle="Home" description="Home page">
       {/* build out profile based on user */}
-      {userData && <ProfileSection user={sessionData.user} />}
+      {userData && <ProfileSection user={sessionData?.user} />}
       {/* posts */}
       <section className="my-2 flex flex-col gap-2">
         <h2 className="text-3xl font-bold">Top 3 Posts</h2>
@@ -50,4 +51,4 @@ const User: NextPage = () => {
   );
 };
 
-export default User;
+export default dynamic(() => Promise.resolve(User), { ssr: false });
