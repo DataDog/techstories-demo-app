@@ -23,8 +23,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-    networks:
-      - techstories-net
   db:
     image: postgres:13-alpine
     restart: always
@@ -38,7 +36,7 @@ services:
       DD_VERSION: 13
       DD_LOGS_INJECTION: "true"
     volumes:
-      - /var/lib/postgresql/data
+      - ./services/db/data:/var/lib/postgresql/data
       - ./services/db/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
       - "5432:5432"
@@ -51,8 +49,6 @@ services:
       com.datadoghq.ad.init_configs: "[{}, {}]"
       com.datadoghq.ad.instances: '[{"host":"%%host%%", "port":5432,"username":"datadog","password":"datadog"}]'
       com.datadoghq.ad.logs: '[{"source": "postgresql", "service": "postgres"}]'
-    networks:
-      - techstories-net
   quotes_api:
     build: ./services/quotes_api
     command: npm run start
@@ -75,12 +71,18 @@ services:
       com.datadoghq.tags.service: "quotes-api"
       com.datadoghq.tags.version: "1.0.0"
       my.custom.label.team: "api-team"
-    networks:
-      - techstories-net
-
-networks:
-  techstories-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.44.0.0/16
+  puppeteer:
+    image: ghcr.io/puppeteer/puppeteer:20.0.0
+    platform: linux/amd64
+    network_mode: host
+    volumes:
+      - ./services/puppeteer/puppeteer.js:/home/pptruser/puppeteer.js
+      - ./services/puppeteer/puppeteer.sh:/home/pptruser/puppeteer.sh
+    environment:
+      - APP_URL=${APP_URL-http://localhost:3000}
+      - PUPPETEER_TIMEOUT
+      - SKIP_SESSION_CLOSE
+    command: bash puppeteer.sh
+    shm_size: "4gb" # Increase shared memory size
+    cap_add:
+      - "SYS_ADMIN" # Required for Puppeteer to run in Docker

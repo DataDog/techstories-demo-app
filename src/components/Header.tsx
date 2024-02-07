@@ -7,7 +7,7 @@ export const Header: React.FC = () => {
       <div className="container flex flex-col items-center justify-between  py-6 md:flex-row">
         <Link
           href="/"
-          className="border-2 border-black bg-black px-2 py-1 text-6xl  text-white "
+          className="logo border-2 border-black bg-black px-2 py-1 text-6xl text-white"
         >
           TechStories
         </Link>
@@ -20,8 +20,8 @@ export const Header: React.FC = () => {
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   return (
-    <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
-      <p>{sessionData && <span>Hi, {sessionData.user.name}!</span>}</p>
+    <nav className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
+      <span>{sessionData && <span>Hi, {sessionData.user.name}!</span>}</span>
       <Link
         href="/posts/new"
         className="bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
@@ -37,11 +37,11 @@ const Auth: React.FC = () => {
         User
       </Link>
       <button
-        className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
+        className="auth-btn border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
-    </div>
+    </nav>
   );
 };

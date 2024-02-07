@@ -20,7 +20,7 @@ const SinglePost: React.FC<{ post: PostWithAuthor }> = ({ post }) => {
             <VoteButton
               onClick={handleVote}
               voteType={hasVoted ? "remove" : "add"}
-              disabled={!canVote && true}
+              disabled={!canVote ? true : false}
             />
             <div className="bg-neutral-600 px-2 py-1 text-2xl text-neutral-50">
               {post._count.votes}

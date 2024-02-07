@@ -38,7 +38,7 @@ export const QuoteBar = () => {
         <div className="italic">{loading ? "Loading..." : error || quote}</div>
         <button
           onClick={() => void getQuote()}
-          className="rounded-md bg-neutral-100 px-2 py-1 text-sm hover:bg-neutral-500 hover:text-neutral-100"
+          className="quote-btn rounded-md bg-neutral-100 px-2 py-1 text-sm hover:bg-neutral-500 hover:text-neutral-100"
         >
           Get a new quote
         </button>

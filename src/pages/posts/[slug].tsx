@@ -48,7 +48,9 @@ const Post: NextPage = () => {
           {post && <SinglePost post={post} />}
         </div>
         <div>
-          <Link href="/">Back to Home</Link>
+          <Link href="/" className="post-back-btn">
+            Back to Home
+          </Link>
         </div>
       </div>
     </MainLayout>

@@ -5,7 +5,7 @@ export const PostList: React.FC<PostListProps> = ({ posts }) => {
   return (
     <>
       {posts?.length ? (
-        <ul className="w-100 flex flex-col">
+        <ul className="w-100 post-list flex flex-col">
           {posts.map((post) => (
             <PostListItem key={post.id} post={post} />
           ))}

@@ -39,7 +39,7 @@ datadogRum.init({
   sessionSampleRate: 100,
   sessionReplaySampleRate: 100,
   silentMultipleInit: true,
-  defaultPrivacyLevel: "mask",
+  defaultPrivacyLevel: "mask-user-input",
   allowedTracingUrls: [
     {
       match: /https:\/\/.*\.env.play.instruqt\.com/,
