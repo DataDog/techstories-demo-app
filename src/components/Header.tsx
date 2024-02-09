@@ -24,14 +24,14 @@ const Auth: React.FC = () => {
       <span>{sessionData && <span>Hi, {sessionData.user.name}!</span>}</span>
       <Link
         href="/posts/new"
-        className="bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
+        className="new-btn bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
       >
         {" "}
         + New Post
       </Link>
       <Link
         href="/user"
-        className="bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
+        className="user-btn bg-neutral-300 px-2 py-1 underline transition-all hover:bg-neutral-400"
       >
         {" "}
         User

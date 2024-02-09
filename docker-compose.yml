@@ -73,7 +73,7 @@ services:
       my.custom.label.team: "api-team"
   puppeteer:
     image: ghcr.io/puppeteer/puppeteer:20.0.0
-    platform: linux/amd64
+    platform: linux/amd64/v8
     network_mode: host
     volumes:
       - ./services/puppeteer/puppeteer.js:/home/pptruser/puppeteer.js
@@ -81,7 +81,6 @@ services:
     environment:
       - APP_URL=${APP_URL-http://localhost:3000}
       - PUPPETEER_TIMEOUT
-      - SKIP_SESSION_CLOSE
     command: bash puppeteer.sh
     shm_size: "4gb" # Increase shared memory size
     cap_add:

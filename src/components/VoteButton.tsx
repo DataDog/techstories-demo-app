@@ -33,7 +33,7 @@ export const VoteButton: React.FC<IVoteButtonProps> = ({
       role="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center justify-center gap-1 text-neutral-500 transition-all hover:text-neutral-700 ${
+      className={`vote-btn flex items-center justify-center gap-1 text-neutral-500 transition-all hover:text-neutral-700 ${
         disabled ? "cursor-not-allowed opacity-50" : ""
       } ${voteType === "remove" ? "rotate-180 transform" : ""}`}
     >
