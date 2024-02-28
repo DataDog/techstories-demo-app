@@ -6,6 +6,8 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3001;
 
+const errorRate = process.env.QUOTES_ERROR_RATE || 0;
+
 app.use(cors());
 app.use(logger);
 
@@ -26,19 +28,19 @@ const quotes = [
 ];
 
 app.get("/quote", async (req, res) => {
-  let randomIndex = Math.floor(Math.random() * quotes.length);
-
-  if (Math.random() < 0.05) {
+  console.log(errorRate);
+  if (Math.random() < errorRate) {
     req.log.error("Internal Server Error");
     res.status(500).send("Internal Server Error");
     return;
   }
 
-  // add 1 in 20 chance of delay
-  if (Math.random() < 0.05) {
+  if (Math.random() < errorRate) {
     req.log.warn("Request delayed by 3 seconds");
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
+
+  const randomIndex = Math.floor(Math.random() * quotes.length);
 
   res.json({ quote: quotes[randomIndex] });
 });

@@ -50,7 +50,7 @@ datadogRum.init({
       propagatorTypes: ["tracecontext", "datadog", "b3", "b3multi"],
     },
     {
-      match: /.*/,
+      match: "*",
       propagatorTypes: ["tracecontext", "datadog", "b3", "b3multi"],
     },
   ],

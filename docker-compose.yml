@@ -63,6 +63,7 @@ services:
       - DD_TRACE_SAMPLE_RATE="1"
       - DD_PROFILING_ENABLED=true
       - DD_AGENT_HOST=datadog
+      - QUOTES_ERROR_RATE=${QUOTES_ERROR_RATE-0}
     volumes:
       - ./services/quotes_api/server.js:/app/server.js
     labels:

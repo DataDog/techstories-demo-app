@@ -67,7 +67,10 @@ const firstSession = async () => {
       const targetPage = page;
       const post = await targetPage.$("li:nth-of-type(13) a");
       if (post) {
-        await Promise.all([targetPage.waitForNavigation(), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          post.click(),
+        ]);
         console.log("clicked post");
       }
     }
@@ -76,7 +79,10 @@ const firstSession = async () => {
       const targetPage = page;
       const backBtn = await targetPage.$("a.post-back-btn");
       if (backBtn) {
-        await Promise.all([targetPage.waitForNavigation(), backBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          backBtn.click(),
+        ]);
         console.log("clicked back button");
       }
     }
@@ -91,7 +97,10 @@ const firstSession = async () => {
         `li:nth-of-type(${Math.floor(Math.random() * postListLength)}) a`
       );
       if (post) {
-        await Promise.all([targetPage.waitForNavigation(), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          post.click(),
+        ]);
         console.log("clicked post");
         await targetPage.waitForTimeout(2500);
       }
@@ -102,7 +111,10 @@ const firstSession = async () => {
       console.log(`on page ${await targetPage.title()}`);
       const quoteBtn = await targetPage.$("button.quote-btn");
       if (quoteBtn) {
-        await Promise.all([targetPage.waitForTimeout(2500), quoteBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForTimeout(2500),
+          quoteBtn.click(),
+        ]);
         console.log("clicked quote button");
         await targetPage.waitForTimeout(2500);
       }
@@ -113,7 +125,10 @@ const firstSession = async () => {
       await targetPage.waitForSelector(".logo");
       const logo = await targetPage.$(".logo");
       if (logo) {
-        await Promise.all([targetPage.waitForNavigation(), logo.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          logo.click(),
+        ]);
         console.log("clicked logo");
         await targetPage.waitForTimeout(2500);
       }
@@ -125,7 +140,10 @@ const firstSession = async () => {
       const signInBtn = await targetPage.$(".auth-btn");
 
       if (signInBtn) {
-        await Promise.all([targetPage.waitForNavigation(), signInBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          signInBtn.click(),
+        ]);
         console.log("clicked sign in");
         await targetPage.waitForTimeout(2500);
 
@@ -134,12 +152,11 @@ const firstSession = async () => {
           targetPage.$("input[name=email]"),
           targetPage.$("input[name=password]"),
         ]);
-
         if (emailInput && passwordInput) {
           await emailInput.type("alice.smith@example.com");
           await passwordInput.type("password");
           await targetPage.waitForTimeout(2000);
-          await Promise.all([
+          await Promise.allSettled([
             targetPage.waitForNavigation(),
             passwordInput.press("Enter"),
           ]);
@@ -161,7 +178,10 @@ const firstSession = async () => {
         )}) .vote-btn`
       );
       if (post) {
-        await Promise.all([targetPage.waitForTimeout(2500), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForTimeout(2500),
+          post.click(),
+        ]);
         console.log("clicked vote");
         await targetPage.waitForTimeout(2500);
       }
@@ -177,14 +197,20 @@ const firstSession = async () => {
         `li:nth-of-type(${Math.floor(Math.random() * postListLength)}) a`
       );
       if (post) {
-        await Promise.all([targetPage.waitForNavigation(), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          post.click(),
+        ]);
         console.log("clicked post");
         await targetPage.waitForTimeout(2500);
         await targetPage.waitForSelector(".vote-btn");
         const voteBtn = await targetPage.$(".vote-btn");
 
         if (voteBtn) {
-          await Promise.all([targetPage.waitForTimeout(2500), voteBtn.click()]);
+          await Promise.allSettled([
+            targetPage.waitForTimeout(2500),
+            voteBtn.click(),
+          ]);
           console.log(
             `clicked vote on single post page ${await targetPage.title()}`
           );
@@ -196,7 +222,10 @@ const firstSession = async () => {
       const targetPage = page;
       const userBtn = await targetPage.$(".user-btn");
       if (userBtn) {
-        await Promise.all([targetPage.waitForNavigation(), userBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          userBtn.click(),
+        ]);
         console.log("clicked user button");
         await targetPage.waitForTimeout(2500);
       }
@@ -237,7 +266,10 @@ const secondSession = async () => {
       const targetPage = page;
       const quoteBtn = await targetPage.$("button.quote-btn");
       if (quoteBtn) {
-        await Promise.all([targetPage.waitForTimeout(2500), quoteBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForTimeout(2500),
+          quoteBtn.click(),
+        ]);
         console.log("clicked quote button");
       }
     }
@@ -246,7 +278,10 @@ const secondSession = async () => {
       const targetPage = page;
       const post = await targetPage.$("li:nth-of-type(13) a");
       if (post) {
-        await Promise.all([targetPage.waitForNavigation({}), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation({}),
+          post.click(),
+        ]);
         console.log("clicked post");
         await targetPage.waitForTimeout(2500);
       }
@@ -258,11 +293,14 @@ const secondSession = async () => {
       const signInBtn = await targetPage.$(".auth-btn");
 
       if (signInBtn) {
-        await Promise.all([targetPage.waitForNavigation(), signInBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          signInBtn.click(),
+        ]);
         console.log("clicked sign in");
 
         // fill in form
-        const [emailInput, passwordInput] = await Promise.all([
+        const [emailInput, passwordInput] = await Promise.allSettled([
           targetPage.$("input[name=email]"),
           targetPage.$("input[name=password]"),
         ]);
@@ -270,7 +308,7 @@ const secondSession = async () => {
         if (emailInput && passwordInput) {
           await emailInput.type("harper.walker@example.com");
           await passwordInput.type("password");
-          await Promise.all([
+          await Promise.allSettled([
             targetPage.waitForNavigation(),
             passwordInput.press("Enter"),
           ]);
@@ -290,7 +328,10 @@ const secondSession = async () => {
       await targetPage.waitForSelector(".user-btn");
       const userBtn = await targetPage.$(".user-btn");
       if (userBtn) {
-        await Promise.all([targetPage.waitForNavigation(), userBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          userBtn.click(),
+        ]);
         console.log("clicked user button");
         await targetPage.waitForTimeout(2500);
       }
@@ -341,7 +382,10 @@ const thirdSession = async () => {
       const targetPage = page;
       const post = await targetPage.$("li:nth-of-type(13) a");
       if (post) {
-        await Promise.all([targetPage.waitForNavigation(), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          post.click(),
+        ]);
         console.log("clicked post");
       }
     }
@@ -350,7 +394,10 @@ const thirdSession = async () => {
       const targetPage = page;
       const backBtn = await targetPage.$("a.post-back-btn");
       if (backBtn) {
-        await Promise.all([targetPage.waitForNavigation(), backBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          backBtn.click(),
+        ]);
         console.log("clicked back button");
       }
     }
@@ -365,7 +412,10 @@ const thirdSession = async () => {
         `li:nth-of-type(${Math.floor(Math.random() * postListLength)}) a`
       );
       if (post) {
-        await Promise.all([targetPage.waitForNavigation(), post.click()]);
+        await Promise.allSettled([
+          targetPage.waitForNavigation(),
+          post.click(),
+        ]);
         console.log("clicked post");
         await targetPage.waitForTimeout(2500);
       }
@@ -376,7 +426,10 @@ const thirdSession = async () => {
       console.log(`on page ${await targetPage.title()}`);
       const quoteBtn = await targetPage.$("button.quote-btn");
       if (quoteBtn) {
-        await Promise.all([targetPage.waitForTimeout(2500), quoteBtn.click()]);
+        await Promise.allSettled([
+          targetPage.waitForTimeout(2500),
+          quoteBtn.click(),
+        ]);
         console.log("clicked quote button");
       }
     }
@@ -384,7 +437,7 @@ const thirdSession = async () => {
     {
       const targetPage = page;
       await targetPage.waitForSelector(".logo");
-      await Promise.all([
+      await Promise.allSettled([
         targetPage.waitForNavigation(),
         targetPage.click(".logo"),
       ]);
@@ -395,7 +448,7 @@ const thirdSession = async () => {
     {
       const targetPage = page;
       await targetPage.waitForSelector(".user-btn");
-      await Promise.all([
+      await Promise.allSettled([
         targetPage.waitForNavigation(),
         targetPage.click(".user-btn"),
       ]);
