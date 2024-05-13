@@ -1,21 +1,90 @@
-version: '3.7'
 services:
+  datadog-agent:
+    image: datadog/agent:7.51.0
+    environment:
+      - DD_API_KEY
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_RUNTIME_SECURITY_CONFIG_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_REMOTE_CONFIGURATION_ENABLED=true
+      - HOST_ROOT='/host/root'
+      - DD_CONTAINER_EXCLUDE="name:datadog-agent"
+      - DD_TAGS=${DD_TAGS-env:techstories}
+    pid: "host"
+    ports:
+      - "8126:8126/tcp"
+      - "8125:8125/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /:/host/root:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /etc/os-release:/etc/os-release
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - SYS_PTRACE
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+      - IPC_LOCK
+      - CHOWN
+    security_opt:
+      - apparmor:unconfined
   db:
-    image: postgres:12.2
+    image: postgres:13-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: db
+      DD_AGENT_HOST: datadog
+      DD_SERVICE: database
+      DD_ENV: ${DD_ENV-local-env}
+      DD_VERSION: 13
+      DD_LOGS_INJECTION: "true"
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - ./services/db/data:/var/lib/postgresql/data
+      - ./services/db/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
       - "5432:5432"
+    labels:
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "database"
+      com.datadoghq.tags.version: "13"
+      my.custom.label.team: "database"
+      com.datadoghq.ad.check_names: '["postgres", "postgres"]'
+      com.datadoghq.ad.init_configs: "[{}, {}]"
+      com.datadoghq.ad.instances: '[{"host":"%%host%%", "port":5432,"username":"datadog","password":"datadog"}]'
+      com.datadoghq.ad.logs: '[{"source": "postgresql", "service": "postgres"}]'
   quotes_api:
     build: ./services/quotes_api
+    command: npm run start
     restart: always
     ports:
       - "3001:3001"
     environment:
       - PORT=3001
-    command: npm run start
+      - DD_ENV=${DD_ENV}
+      - DD_SERVICE=quotes-api
+      - DD_LOGS_INJECTION=true
+      - DD_TRACE_SAMPLE_RATE="1"
+      - DD_PROFILING_ENABLED=true
+      - DD_AGENT_HOST=datadog
+      - QUOTES_ERROR_RATE=${QUOTES_ERROR_RATE-0}
+    volumes:
+      - ./services/quotes_api/server.js:/app/server.js
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "quotes-api"
+      com.datadoghq.tags.version: "1.0.0"
+      my.custom.label.team: "api-team"
+
