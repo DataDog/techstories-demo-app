@@ -1,10 +1,9 @@
 services:
   datadog-agent:
-    image: datadog/agent:7.51.0
+    image: gcr.io/datadoghq/agent:7.53.0
     environment:
       - DD_API_KEY
-      - DD_APM_ENABLED=true
-      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_HOSTNAME=csm-threats-lab-vm
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
       - DD_RUNTIME_SECURITY_CONFIG_ENABLED=true
@@ -16,6 +15,7 @@ services:
       - DD_CONTAINER_LABELS_AS_TAGS={"my.custom.label.team":"team"}
       - DD_CONTAINER_EXCLUDE="name:datadog-agent"
       - DD_TAGS=${DD_TAGS-env:csm-threats-course}
+      - DD_CLOUD_PROVIDER_METADATA=[]
     pid: "host"
     ports:
       - "8126:8126/tcp"
@@ -57,7 +57,7 @@ services:
       - ./services/db/data:/var/lib/postgresql/data
       - ./services/db/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     labels:
       com.datadoghq.tags.env: "${DD_ENV}"
       com.datadoghq.tags.service: "database"
@@ -72,16 +72,11 @@ services:
     command: npm run start
     restart: always
     ports:
-      - "3001:3001"
+      - "127.0.0.1:3001:3001"
     environment:
       - PORT=3001
       - DD_ENV=${DD_ENV}
       - DD_SERVICE=quotes-api
-      - DD_LOGS_INJECTION=true
-      - DD_TRACE_SAMPLE_RATE="1"
-      - DD_PROFILING_ENABLED=true
-      - DD_AGENT_HOST=datadog
-      - QUOTES_ERROR_RATE=${QUOTES_ERROR_RATE-0}
     volumes:
       - ./services/quotes_api/server.js:/app/server.js
     labels:
