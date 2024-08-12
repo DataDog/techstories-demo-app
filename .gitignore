@@ -41,7 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-./services/db/data
 db_data
 .npm
 
