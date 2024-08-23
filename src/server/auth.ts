@@ -8,6 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { randomUUID, randomBytes } from "crypto";
+import bcrypt from 'bcrypt';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -88,10 +89,14 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        // check if password is `password`
-        if (user && credentials.password === "password") {
-          console.log("found user", user);
-          return user;
+        // Compare the provided password with the hashed password in the database
+        if (user && user.password) {
+          const isValidPassword = await bcrypt.compare(credentials.password, user.password);
+
+          if (isValidPassword) {
+            console.log("found user", user);
+            return user;
+          }
         }
 
         // Return null if user data could not be retrieved
