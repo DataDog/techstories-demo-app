@@ -9,7 +9,7 @@ services:
     volumes:
       - ./db_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "172.0.0.1:5432:5432"
   quotes_api:
     build: ./services/quotes_api
     restart: always
