@@ -17,4 +17,26 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
+      - DD_AGENT_HOST=datadog-agent
+      - DD_TRACE_AGENT_PORT=8126
+      - DD_ENV=asm-protection-course
+      - DD_SERVICE=quotes-api
+      - DD_APPSEC_ENABLED=true
     command: npm run start
+    depends_on:
+      - datadog-agent
+  datadog-agent:
+    image: datadog/agent:latest
+    environment:
+      - DD_API_KEY
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+    ports:
+      - "8126:8126/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
