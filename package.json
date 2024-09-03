@@ -64,7 +64,7 @@
     "autoprefixer": "^10.4.14",
     "babel-jest": "^29.5.0",
     "cypress": "12.3.0",
-    "dd-trace": "^4.0.0",
+    "dd-trace": "^4.46.0",
     "eslint": "^8.36.0",
     "eslint-config-next": "^13.2.4",
     "isomorphic-fetch": "^3.0.0",
