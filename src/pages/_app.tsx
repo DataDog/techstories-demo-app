@@ -4,19 +4,11 @@ import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
-import ddTrace from 'dd-trace';
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
-
-if (typeof window === 'undefined') {
-  ddTrace.init({
-    service: 'nextjs-frontend',
-    env: 'production',
-  });
-}
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
