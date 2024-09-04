@@ -13,11 +13,6 @@ const Home: NextPage = () => {
         stories about technology. Log in to create, comment, and vote on
         stories. This site is in private beta, so no new user signups are being
         accepted at this time. 
-        <br />
-        <br />
-        <strong>Username:</strong> <code>alice.smith@example.com</code>
-        <br />
-        <strong>Password:</strong> <code>password</code>
       </p>
 
       {posts ? <PostList posts={posts} /> : "Loading..."}
