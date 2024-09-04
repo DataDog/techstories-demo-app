@@ -26,7 +26,7 @@ services:
     depends_on:
       - datadog-agent
   datadog-agent:
-    image: datadog/agent:latest
+    image: gcr.io/datadoghq/agent:7.53.0
     environment:
       - DD_API_KEY
       - DD_APM_ENABLED=true
