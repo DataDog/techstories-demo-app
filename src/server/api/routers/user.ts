@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { z } from "zod";
+const tracer = require('dd-trace').init();
 
 import {
   createTRPCRouter,
@@ -51,6 +52,13 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ name: z.string(), email: z.string(), password: z.string() }))
     .mutation(({ ctx, input }) => {
       const hashedPassword = bcrypt.hashSync(input.password, 10);
+      
+      // ASM - track user creation event
+      const eventName = 'users.signup'
+      const metadata = { 'usr.id': input.email }
+      
+      tracer.appsec.trackCustomEvent(eventName, metadata)
+      
       return ctx.prisma.user.create({
         data: {
           name: input.name,
