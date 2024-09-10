@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { api } from "~/utils/api";
 
 const SignupForm = () => {
   const [firstName, setFirstName] = useState('');
@@ -8,6 +9,12 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+
+  const mutation = api.user.createUser.useMutation({
+    async onSuccess() {
+      await router.push(`/`);
+    },
+  });
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -18,20 +25,8 @@ const SignupForm = () => {
       return;
     }
 
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ firstName, lastName, email, password }),
-    });
-
-    if (res.ok) {
-      router.push('/auth/signin');
-    } else {
-      console.error('Signup failed');
-      setError('Signup failed');
-    }
+    console.log('Creating user...');
+    mutation.mutate({ name: firstName + ' ' + lastName, email, password });
   };
 
   const formContainerStyle = {

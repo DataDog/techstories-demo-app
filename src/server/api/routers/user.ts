@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { z } from "zod";
 
 import {
@@ -47,12 +48,14 @@ export const userRouter = createTRPCRouter({
     }),
 
   createUser: publicProcedure
-    .input(z.object({ name: z.string(), email: z.string() }))
+    .input(z.object({ name: z.string(), email: z.string(), password: z.string() }))
     .mutation(({ ctx, input }) => {
+      const hashedPassword = bcrypt.hashSync(input.password, 10);
       return ctx.prisma.user.create({
         data: {
           name: input.name,
           email: input.email,
+          password: hashedPassword,
         },
       });
     }),

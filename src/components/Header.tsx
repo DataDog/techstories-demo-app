@@ -1,5 +1,6 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 
 export const Header: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ export const Header: React.FC = () => {
 
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
+  const router = useRouter();
   return (
     <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
       <p>{sessionData && <span>Hi, {sessionData.user?.name}!</span>}</p>
@@ -38,7 +40,7 @@ const Auth: React.FC = () => {
       {!sessionData && ( 
               <button
                 className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
-                //onClick={}
+                onClick={() => router.push('/auth/signup')}
               >
                 Create Account
               </button>
