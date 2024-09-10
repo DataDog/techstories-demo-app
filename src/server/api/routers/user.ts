@@ -56,7 +56,6 @@ export const userRouter = createTRPCRouter({
       // ASM - track user creation event
       const eventName = 'users.signup'
       const metadata = { 'usr.id': input.email }
-      
       tracer.appsec.trackCustomEvent(eventName, metadata)
       
       return ctx.prisma.user.create({
