@@ -9,6 +9,8 @@ import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { randomUUID, randomBytes } from "crypto";
 import bcrypt from 'bcrypt';
+import { use } from "chai";
+const tracer = require('dd-trace').init();
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -56,6 +58,13 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+
+        // Log successful user authentication event
+        const userInformation = {
+          id: user.email,
+          email: user.email
+        };
+        tracer.appsec.trackUserLoginSuccessEvent(user) 
       }
       return token;
     },
@@ -83,14 +92,17 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials = { email: "", password: "" }, req) {
+        let userExists = false;
+        
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
           },
         });
 
-        // Compare the provided password with the hashed password in the database
+        // Compare the provided password with the hashed password in the database  
         if (user && user.password) {
+          userExists = true;
           const isValidPassword = await bcrypt.compare(credentials.password, user.password);
 
           if (isValidPassword) {
@@ -98,6 +110,8 @@ export const authOptions: NextAuthOptions = {
             return user;
           }
         }
+
+        tracer.appsec.trackUserLoginFailureEvent(credentials.email, userExists)
 
         // Return null if user data could not be retrieved
         return null;
