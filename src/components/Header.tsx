@@ -35,6 +35,14 @@ const Auth: React.FC = () => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
+      {!sessionData && ( 
+              <button
+                className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
+                //onClick={}
+              >
+                Create Account
+              </button>
+            )}
     </div>
   );
 };

@@ -31,7 +31,7 @@
     "./prisma/**/*.ts",
     "./cypress/**/*.ts",
     "./cypress.config.ts"
-  ],
+, "src/pages/auth"  ],
   "exclude": ["node_modules", "src/*.test.ts"],
   "types": ["node", "jest", "@testing-library/jest-dom"]
 }
