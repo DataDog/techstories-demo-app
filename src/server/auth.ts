@@ -60,11 +60,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
 
         // Log successful user authentication event
-        const userInformation = {
-          id: user.email,
-          email: user.email
-        };
-        tracer.appsec.trackUserLoginSuccessEvent(user) 
+        tracer.appsec.trackUserLoginSuccessEvent({id: user.email, email: user.email, name: user.name}) 
       }
       return token;
     },
