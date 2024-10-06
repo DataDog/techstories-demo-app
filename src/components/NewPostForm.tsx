@@ -14,7 +14,6 @@ export const NewPostForm: React.FC = () => {
   const router = useRouter();
 
   const { data: session } = useSession();
-  console.log(session);
 
   const mutation = api.post.createPost.useMutation({
     async onSuccess(_, { slug }) {
