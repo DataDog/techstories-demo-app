@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
+import { useSession } from "next-auth/react"; //
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
@@ -12,6 +13,9 @@ export const NewPostForm: React.FC = () => {
   const [content, setContent] = useState<string | undefined>("");
   const router = useRouter();
 
+  const { data: session } = useSession();
+  console.log(session);
+
   const mutation = api.post.createPost.useMutation({
     async onSuccess(_, { slug }) {
       await router.push(`/posts/${slug}`);
@@ -19,17 +23,29 @@ export const NewPostForm: React.FC = () => {
   });
 
   const generatePost = async () => {
+    
     // Fetch generated post content from expensive third-party API
+    // Send user ID from session in request body
     const URL = process.env.NEXT_GENERATE_POST_API_URL
         ? `${process.env.NEXT_GENERATE_POST_API_URL}/generate_post`
         : "http://localhost:3002/generate_post";
     try {
-      const response = await fetch(URL);
+      const response = await fetch(URL, {
+        method: "POST",  // Assuming it's a POST request
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sessionId: session?.user?.id,
+          userName: session?.user?.name,
+          userEmail: session?.user?.email,  
+        }),
+      });
+      
       if (!response.ok) {
         throw new Error('Failed to generate post content');
     }
     const generatedPost = await response.json();
-    console.log('Generated post content:', generatedPost);
 
     // Add generated post content to form
     setTitle(generatedPost.post.title);
