@@ -18,6 +18,26 @@ export const NewPostForm: React.FC = () => {
     },
   });
 
+  const generatePost = async () => {
+    const URL = process.env.NEXT_GENERATE_POST_API_URL
+        ? `${process.env.NEXT_GENERATE_POST_API_URL}/generate_post`
+        : "http://localhost:3002/generate_post";
+    try {
+      const response = await fetch(URL);
+      if (!response.ok) {
+        throw new Error('Failed to generate post content');
+    }
+    const generatedPost = await response.json();
+    console.log('Generated post content:', generatedPost);
+
+    // Add generated post content to form for user
+    setTitle(generatedPost.post.title);
+    setContent(generatedPost.post.content);
+  } catch (error) {
+    console.error('Failed to generate post content', error);
+  }
+};
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -68,6 +88,15 @@ export const NewPostForm: React.FC = () => {
           }}
         />
       </div>
+
+      {/* Generate Post Button */}
+      <button
+        type="button"
+        onClick={generatePost}
+        className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Generate Post Content using AI
+      </button>
 
       <button
         type="submit"
