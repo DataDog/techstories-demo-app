@@ -12,6 +12,10 @@ app.use(cors());
 const posts = JSON.parse(fs.readFileSync("demo_posts.json", "utf-8"));
 
 app.get("/generate_post", async (req, res) => {
+  // Trace this event in ASM
+  const eventName = 'activity.call_llm_api';
+  tracer.appsec.trackCustomEvent(eventName);
+  
   let randomIndex = Math.floor(Math.random() * posts.length);
 
   // Respond with a random post

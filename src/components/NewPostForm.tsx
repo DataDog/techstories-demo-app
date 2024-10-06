@@ -19,6 +19,7 @@ export const NewPostForm: React.FC = () => {
   });
 
   const generatePost = async () => {
+    // Fetch generated post content from expensive third-party API
     const URL = process.env.NEXT_GENERATE_POST_API_URL
         ? `${process.env.NEXT_GENERATE_POST_API_URL}/generate_post`
         : "http://localhost:3002/generate_post";
@@ -30,7 +31,7 @@ export const NewPostForm: React.FC = () => {
     const generatedPost = await response.json();
     console.log('Generated post content:', generatedPost);
 
-    // Add generated post content to form for user
+    // Add generated post content to form
     setTitle(generatedPost.post.title);
     setContent(generatedPost.post.content);
   } catch (error) {
