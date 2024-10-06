@@ -48,18 +48,21 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
   },
+  debug: true,
   callbacks: {
     session({ session, token }) {
+      console.log('Hitting Session callback', session, token)
       if (session?.user) {
         session.user.id = token.id;
       }
       return session;
     },
     jwt({ token, user }) {
+      console.log('Hitting JWT callback', token, user)
       if (user) {
         token.id = user.id;
 
-        // Log successful user authentication event
+        // Trace successful user authentication event before returning token
         tracer.appsec.trackUserLoginSuccessEvent({id: user.email, email: user.email, name: user.name}) 
       }
       return token;
@@ -89,7 +92,8 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials = { email: "", password: "" }, req) {
         let userExists = false;
-        
+        console.log('Authorizing user with credentials:', credentials)
+
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
