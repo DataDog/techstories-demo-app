@@ -25,8 +25,8 @@ export const NewPostForm: React.FC = () => {
     
     // Fetch generated post content from expensive third-party API
     // Send user ID from session in request body
-    const URL = process.env.NEXT_GENERATE_POST_API_URL
-        ? `${process.env.NEXT_GENERATE_POST_API_URL}/generate_post`
+    const URL = process.env.NEXT_PUBLIC_GENERATE_POST_API_URL
+        ? `${process.env.NEXT_PUBLIC_GENERATE_POST_API_URL}/generate_post`
         : "http://localhost:3002/generate_post";
     try {
       const response = await fetch(URL, {

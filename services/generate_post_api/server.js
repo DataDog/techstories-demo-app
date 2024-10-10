@@ -30,7 +30,8 @@ app.post("/generate_post", async (req, res) => {
     name: userName, 
     email: userEmail, 
     session_id: sessionId });
-
+  
+  console.log("Tracing custom event: activity.call_llm_api");
   const eventName = 'activity.call_llm_api';
   tracer.appsec.trackCustomEvent(eventName);
 
