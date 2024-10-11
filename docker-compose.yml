@@ -19,7 +19,7 @@ services:
       - PORT=3001
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
-      - DD_ENV=asm-protection-course
+      - DD_ENV=prod
       - DD_SERVICE=quotes-api
       - DD_APPSEC_ENABLED=true
     command: npm run start
@@ -34,7 +34,7 @@ services:
       - PORT=3002
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
-      - DD_ENV=asm-protection-course
+      - DD_ENV=prod
       - DD_SERVICE=generate-posts-api
       - DD_APPSEC_ENABLED=true
     command: npm run start
