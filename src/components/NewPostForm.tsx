@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { useSession } from "next-auth/react"; //
+import { useSession } from "next-auth/react";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export const NewPostForm: React.FC = () => {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState<string | undefined>("");
+  const [content, setContent] = useState<string | undefined>(""); 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -19,45 +19,50 @@ export const NewPostForm: React.FC = () => {
   const mutation = api.post.createPost.useMutation({
     async onSuccess(_, { slug }) {
       await router.push(`/posts/${slug}`);
+      setTitle(""); // Clear title on successful post creation
+      setContent(""); // Clear content on successful post creation
     },
   });
 
   const generatePost = async () => {
     setErrorMessage(null); // Reset error message
     const URL = process.env.NEXT_PUBLIC_GENERATE_POST_API_URL
-        ? `${process.env.NEXT_PUBLIC_GENERATE_POST_API_URL}/generate_post`
-        : "http://localhost:3002/generate_post";
+      ? `${process.env.NEXT_PUBLIC_GENERATE_POST_API_URL}/generate_post`
+      : "http://localhost:3002/generate_post";
+    
     try {
       const response = await fetch(URL, {
-        method: "POST",  // Assuming it's a POST request
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           sessionId: session?.user?.id,
           userName: session?.user?.name,
-          userEmail: session?.user?.email,  
+          userEmail: session?.user?.email,
         }),
       });
-      
+
+      const generatedPostResponse = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(errorData);
-        if (errorData?.errors && errorData.errors.length > 0) {
-          const { title, detail } = errorData.errors[0];
-          setErrorMessage(
-            `Response Status Code: ${response.status} ${response.statusText}\nError: ${title}: ${detail}`
-          );
+        if (generatedPostResponse?.errors && generatedPostResponse.errors.length > 0) {
+          const { title, detail } = generatedPostResponse.errors[0];
+          setErrorMessage(`Response Status Code: ${response.status} ${response.statusText}
+            \nResponse error:\nError title: ${title}\nError detail: ${detail}`);
         } else {
           throw new Error("Failed to generate post content");
         }
+        return;
       }
-      const generatedPost = await response.json();
+
       // Add generated post content to form
+      setTitle(generatedPostResponse.post.title);
+      setContent(generatedPostResponse.post.content);
+
     } catch (error) {
       console.error('Failed to generate post content', error);
+      setErrorMessage("An error occurred while generating the post content.");
     }
   };
 
@@ -65,14 +70,13 @@ export const NewPostForm: React.FC = () => {
     e.preventDefault();
 
     if (!title || !content) {
+      setErrorMessage("Title and content are required.");
       return;
     }
 
     const slug = title.toLowerCase().replace(/ /g, "-");
 
     mutation.mutate({ title, content, slug });
-    setTitle("");
-    setContent("");
   };
 
   return (
@@ -93,6 +97,7 @@ export const NewPostForm: React.FC = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
+      
       <div className="flex flex-col">
         <label
           htmlFor="content"
@@ -102,21 +107,14 @@ export const NewPostForm: React.FC = () => {
         </label>
         <MDEditor
           value={content}
-          onChange={setContent}
+          onChange={setContent} // This will update the content in state
           preview="edit"
           hideToolbar={false}
-          commands={[]}
           textareaProps={{
             placeholder: "Write your post's content using Markdown.",
           }}
         />
       </div>
-      {/* Display error message if any */}
-      {errorMessage && (
-        <div className="text-red-500 text-sm whitespace-pre-wrap">
-          {errorMessage}
-        </div>
-      )}
 
       {/* Generate Post Button */}
       <button
@@ -133,8 +131,17 @@ export const NewPostForm: React.FC = () => {
       >
         Submit
       </button>
+
+      {errorMessage && (
+        <div className="flex items-center p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg whitespace-pre-wrap" role="alert">
+          <span>{errorMessage}</span>
+        </div>
+      )}
     </form>
   );
 };
 
 export default NewPostForm;
+
+
+
