@@ -11,6 +11,7 @@ const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 export const NewPostForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState<string | undefined>("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const { data: session } = useSession();
@@ -22,9 +23,7 @@ export const NewPostForm: React.FC = () => {
   });
 
   const generatePost = async () => {
-    
-    // Fetch generated post content from expensive third-party API
-    // Send user ID from session in request body
+    setErrorMessage(null); // Reset error message
     const URL = process.env.NEXT_PUBLIC_GENERATE_POST_API_URL
         ? `${process.env.NEXT_PUBLIC_GENERATE_POST_API_URL}/generate_post`
         : "http://localhost:3002/generate_post";
@@ -42,17 +41,25 @@ export const NewPostForm: React.FC = () => {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to generate post content');
+        const errorData = await response.json();
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(errorData);
+        if (errorData?.errors && errorData.errors.length > 0) {
+          const { title, detail } = errorData.errors[0];
+          setErrorMessage(
+            `Response Status Code: ${response.status} ${response.statusText}\nError: ${title}: ${detail}`
+          );
+        } else {
+          throw new Error("Failed to generate post content");
+        }
+      }
+      const generatedPost = await response.json();
+      // Add generated post content to form
+    } catch (error) {
+      console.error('Failed to generate post content', error);
     }
-    const generatedPost = await response.json();
-
-    // Add generated post content to form
-    setTitle(generatedPost.post.title);
-    setContent(generatedPost.post.content);
-  } catch (error) {
-    console.error('Failed to generate post content', error);
-  }
-};
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,6 +111,12 @@ export const NewPostForm: React.FC = () => {
           }}
         />
       </div>
+      {/* Display error message if any */}
+      {errorMessage && (
+        <div className="text-red-500 text-sm whitespace-pre-wrap">
+          {errorMessage}
+        </div>
+      )}
 
       {/* Generate Post Button */}
       <button

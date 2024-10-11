@@ -9,14 +9,17 @@ const port = process.env.PORT || 3002;
 app.use(cors());
 app.use(express.json());
 
-// In BETA - read the JSON file containing demo posts
-const posts = JSON.parse(fs.readFileSync("demo_posts.json", "utf-8"));
+function getGeneratedPost(posts) {
+  // In Demo - read the JSON file containing demo posts
+  // Represents a function that makes a call to a third-party LLM
+  const allPosts = JSON.parse(fs.readFileSync("demo_posts.json", "utf-8"));
+  const randomIndex = Math.floor(Math.random() * allPosts.length);
+  return allPosts[randomIndex];
+}
 
 app.post("/generate_post", async (req, res) => {
-  // In this example, we extract user data from the request body
-  const { sessionId } = req.body;
-  const {userName} = req.body;
-  const {userEmail} = req.body;
+  // Extract user data from the request body
+  const { sessionId, userName, userEmail } = req.body;
 
   if (!userEmail) {
     return res.status(400).json({ error: "User Email is required" });
@@ -24,24 +27,30 @@ app.post("/generate_post", async (req, res) => {
 
   console.log(`Generating post for user: ${userEmail}`);
 
-  // Trace event in Datadog ASM with user attribution
-  tracer.setUser({ 
-    id: userEmail, 
-    name: userName, 
-    email: userEmail, 
-    session_id: sessionId });
-  
-  console.log("Tracing custom event: activity.call_llm_api");
-  const eventName = 'activity.call_llm_api';
+  user = {
+    id: userEmail,
+    name: userName,
+    email: userEmail,
+    session_id: sessionId,
+  };
+
+  if (tracer.appsec.isUserBlocked(user)) { 
+    console.log(`User ${userEmail} is blocked`);
+    return tracer.appsec.blockRequest(req, res); // Blocking response is sent with status code 403
+  }
+
+  // If user is not blocked, continue with the generate_post request
+  const eventName = "activity.call_llm_api";
   tracer.appsec.trackCustomEvent(eventName);
 
-  // Select a post from pool of demo posts until third party API is integrated
   // Return generated post
-  let randomIndex = Math.floor(Math.random() * posts.length);
-  res.json({ post: posts[randomIndex] });
+  const post = getGeneratedPost();
+  
+  res.json({ post: post });
 });
 
 app.listen(port, () => {
-  console.info(`Server is running at http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
+
 
