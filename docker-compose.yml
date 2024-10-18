@@ -40,6 +40,21 @@ services:
     command: npm run start
     depends_on:
       - datadog-agent
+  referrals:
+    build: ./services/referrals
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - FLASK_APP=referrals.py
+      - ENV FLASK_ENV=development
+      - DD_ENV=production
+      - DD_SERVICE=referrals
+      - DD_APPSEC_ENABLED=true
+    command: ["flask", "run", "--port=3003"]
+    depends_on:
+      - datadog-agent
   datadog-agent:
     image: gcr.io/datadoghq/agent:7.53.0
     environment:
