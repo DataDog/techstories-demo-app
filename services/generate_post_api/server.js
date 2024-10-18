@@ -1,10 +1,10 @@
-// const tracer = require("dd-trace").init();
+const tracer = require("dd-trace").init();
 
-const tracer = require('dd-trace').init({
-  appsec: {
-    blockedTemplateJson: './custom_blocked_response.json'
-  }
-})
+// const tracer = require('dd-trace').init({
+//   appsec: {
+//     blockedTemplateJson: './custom_blocked_response.json'
+//   }
+// })
 
 const express = require("express");
 const cors = require("cors");
