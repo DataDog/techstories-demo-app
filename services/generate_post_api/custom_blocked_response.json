@@ -1,0 +1,8 @@
+{
+    "errors": [
+        {
+            "title": "Account blocked",
+            "detail": "User account blocked from generating posts. Blocked due to excessive activity."
+        }
+    ]
+}

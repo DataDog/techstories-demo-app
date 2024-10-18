@@ -20,6 +20,7 @@ const SignupForm = () => {
     e.preventDefault();
 
     // Validate email domain
+    // we do not want users to sign up with real data
     if (!email.endsWith('@example.com')) {
       setError('Email must end with @example.com');
       return;

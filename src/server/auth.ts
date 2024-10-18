@@ -9,7 +9,6 @@ import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { randomUUID, randomBytes } from "crypto";
 import bcrypt from 'bcrypt';
-import { use } from "chai";
 const tracer = require('dd-trace').init();
 
 /**
@@ -96,6 +95,14 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
           },
         });
+
+        // Check if user is on ASM Denylist
+        console.log(`Checking if user ${user?.email} is blocked`);
+        
+        if (tracer.appsec.isUserBlocked({id: credentials.email, email: credentials.email})) { 
+          console.log(`User ${credentials.email} is blocked`);
+          return tracer.appsec.blockRequest(); // Send blocking response 
+        }
 
         // Compare the provided password with the hashed password in the database  
         if (user && user.password) {
