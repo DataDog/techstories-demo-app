@@ -48,17 +48,20 @@ services:
     environment:
       - PORT=3003
       - FLASK_APP=referrals.py
-      - ENV FLASK_ENV=development
+      - NEXT_APP_URL
+      - DD_AGENT_HOST=datadog-agent
+      - DD_TRACE_AGENT_PORT=8126
       - DD_ENV=production
       - DD_SERVICE=referrals
       - DD_APPSEC_ENABLED=true
-    command: ["flask", "run", "--port=3003"]
+    command: ["ddtrace-run", "flask", "run", "--host=0.0.0.0", "--port=3003"]
     depends_on:
       - datadog-agent
   datadog-agent:
     image: gcr.io/datadoghq/agent:7.53.0
     environment:
       - DD_API_KEY
+      - DD_APP_KEY
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_LOGS_ENABLED=true

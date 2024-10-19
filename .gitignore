@@ -44,4 +44,5 @@ yarn-error.log*
 db_data
 .npm
 
-# jenkins
+# python
+__pycache__/

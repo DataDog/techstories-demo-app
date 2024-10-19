@@ -21,6 +21,10 @@ export const Header: React.FC = () => {
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
+  const REFERRAL_URL = process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL
+      ? `${process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL}/generate_post`
+      : "http://127.0.0.1:3003/refer_friends";
+
   return (
     <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
       <p>{sessionData && <span>Hi, {sessionData.user?.name}!</span>}</p>
@@ -37,6 +41,16 @@ const Auth: React.FC = () => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
+      {sessionData && (
+              <a
+                href={`${REFERRAL_URL}?email=${encodeURIComponent(sessionData.user.email ?? '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
+              >
+                Refer a Friend
+              </a>
+            )}
       {!sessionData && ( 
               <button
                 className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"
