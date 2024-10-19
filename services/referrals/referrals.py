@@ -1,12 +1,20 @@
 from flask import Flask, request, render_template_string
+from ddtrace.contrib.trace_utils import set_user
+from ddtrace.appsec.trace_utils import track_custom_event
+from ddtrace import tracer
 
 app = Flask(__name__)
 
+@app.route('/hello', methods=['GET'])
+def hello():
+    return "Hello, World!"
+
 @app.route('/refer_friends', methods=['GET', 'POST'])
 def refer_friends():
-    # Check the 'Accept' header to see if the client expects HTML
-    if "text/html" in request.headers.get("Accept", ""):
-        print("Client expects HTML content")
+   # Get the email from the query parameter and use it as the user_id
+    user_email = request.args.get('email')
+
+    set_user(tracer, user_email, propagate=True)
 
     if request.method == 'POST':
         user_email = request.form.get('email')
@@ -16,37 +24,72 @@ def refer_friends():
         if not referral_email.endswith('@example.com'):
             return render_template_string("""
                 <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+                            .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+                            h1 { color: #333; }
+                            p { color: #666; }
+                            .error { color: red; }
+                        </style>
+                    </head>
                     <body>
-                        <h1>Invalid Email</h1>
-                        <p>Referral email must end with @example.com.</p>
+                        <div class="container">
+                            <h1 class="error">Invalid Email</h1>
+                            <p>Referral email must end with @example.com.</p>
+                        </div>
                     </body>
                 </html>
             """)
 
         return render_template_string("""
             <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+                        .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+                        h1 { color: #333; }
+                        p { color: #666; }
+                    </style>
+                </head>
                 <body>
-                    <h1>Referral Sent!</h1>
-                    <p>Your referral was sent to {{ referral_email }}</p>
+                    <div class="container">
+                        <h1>Referral Sent!</h1>
+                        <p>Your referral was sent to {{ referral_email }}</p>
+                    </div>
                 </body>
             </html>
         """, referral_email=referral_email)
 
     return render_template_string("""
         <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+                    h1 { color: #333; }
+                    p { color: #666; }
+                    form { display: flex; flex-direction: column; }
+                    label { margin-bottom: 5px; color: #333; }
+                    input[type="email"] { padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; }
+                    button { padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+                    button:hover { background-color: #0056b3; }
+                </style>
+            </head>
             <body>
-                <h1>Refer a Friend</h1>
-                <form method="POST">
-                    <label>Your Email:</label><br>
-                    <input type="email" name="email" required><br><br>
-                    <label>Friend's Email:</label><br>
-                    <input type="email" name="referral" required><br><br>
-                    <button type="submit">Send Referral</button>
-                </form>
+                <div class="container">
+                    <h1>Welcome, {{ user_email }}</h1>
+                    <p>Invite a friend to join us by filling out the form below:</p>
+                    <form method="POST">
+                        <label for="referral">Who would you like to refer?</label>
+                        <input type="email" name="referral" id="referral" required>
+                        <button type="submit">Send Referral</button>
+                    </form>
+                </div>
             </body>
         </html>
-    """)
+    """, user_email=user_email)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=3003)
 
