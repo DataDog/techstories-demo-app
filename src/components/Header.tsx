@@ -22,7 +22,7 @@ const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
   const REFERRAL_URL = process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL
-      ? `${process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL}/generate_post`
+      ? `${process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL}/refer_friends`
       : "http://127.0.0.1:3003/refer_friends";
 
   return (
