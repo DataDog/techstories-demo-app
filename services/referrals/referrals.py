@@ -14,7 +14,7 @@ def refer_friends():
    # Get the email from the query parameter and use it as the user_id
     user_email = request.args.get('email')
 
-    set_user(tracer, user_email, propagate=True)
+    # set_user(tracer, user_email, propagate=True)
 
     if request.method == 'POST':
         user_email = request.form.get('email')
