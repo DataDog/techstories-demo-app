@@ -9,6 +9,8 @@ import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { randomUUID, randomBytes } from "crypto";
 import bcrypt from 'bcrypt';
+
+// initialize the Datadog tracer
 const tracer = require('dd-trace').init();
 
 /**
