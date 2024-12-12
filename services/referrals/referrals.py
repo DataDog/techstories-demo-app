@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template_string
 from ddtrace.contrib.trace_utils import set_user
-from ddtrace.appsec.trace_utils import track_custom_event
 from ddtrace import tracer
 
 app = Flask(__name__)
@@ -11,10 +10,16 @@ def hello():
 
 @app.route('/refer_friends', methods=['GET', 'POST'])
 def refer_friends():
+   
    # Get the email from the query parameter and use it as the user_id
     user_email = request.args.get('email')
+    
+    # In this application, we use the user_email as the user_id for demo purposes
+    # In a production application, you should use a unique,immutable identifier for the user
+    # The user_id value maps to the usr.id attribute in Datadog ASM
+    # User blocking targets usr.id
 
-    # set_user(tracer, user_email, propagate=True)
+    # set_user(tracer=tracer, user_id=user_email, propagate=True)
 
     if request.method == 'POST':
         user_email = request.form.get('email')
