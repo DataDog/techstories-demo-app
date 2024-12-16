@@ -6,6 +6,7 @@ export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("Error signing in. Please check your username and password.");
   const router = useRouter();
 
   const handleSubmit = async (
@@ -23,9 +24,9 @@ export const SignInForm = () => {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
+        redirect: false,
       });
-
+      
       if (result?.error) {
         setError(true);
         return;
@@ -33,7 +34,8 @@ export const SignInForm = () => {
 
       await router.push(callbackUrl);
     } catch (error) {
-      console.error(error);
+      setErrorMessage("You have been blocked from signing in. Please contact support.");
+      setError(true);
     }
   };
   return (
@@ -58,7 +60,7 @@ export const SignInForm = () => {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">
-                Your email or password is incorrect.
+                {errorMessage}
               </h3>
             </div>
           </div>
