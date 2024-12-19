@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "NODE_OPTIONS='--require dd-trace/init' DD_APM_ENABLED=true DD_APPSEC_ENABLED=true DD_SERVICE=frontend next dev",
+    "dev": "NODE_OPTIONS='--require dd-trace/init' DD_ENV=production DD_APM_ENABLED=true DD_APPSEC_ENABLED=true DD_SERVICE=frontend next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "NODE_OPTIONS='--require dd-trace/init' DD_APM_ENABLED=true DD_APPSEC_ENABLED=true DD_SERVICE=frontend next start",
+    "start": "NODE_OPTIONS='--require dd-trace/init' DD_ENV=production DD_APM_ENABLED=true DD_APPSEC_ENABLED=true DD_SERVICE=frontend next start",
     "db-create": "prisma db push --schema=prisma/schema.prisma",
     "db-seed": "NODE_ENV=development prisma db seed",
     "db-prep": "yarn db-create && yarn db-seed && yarn postinstall",

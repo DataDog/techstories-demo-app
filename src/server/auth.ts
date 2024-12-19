@@ -60,9 +60,11 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        console.log("Got user", user);
+        console.log(user);
 
         // Trace successful user authentication event before returning token
-        tracer.appsec.trackUserLoginSuccessEvent({id: user.email, email: user.email, name: user.name}) 
+        tracer.appsec.trackUserLoginSuccessEvent({id: user.id, email: user.email, name: user.name}) 
       }
       return token;
     },
@@ -99,10 +101,10 @@ export const authOptions: NextAuthOptions = {
         });
 
         // Check if user is on ASM Denylist
-        console.log(`Checking if user ${user?.email} is blocked`);
+        console.log(`Checking if user ${user?.id} is blocked`);
         
-        if (tracer.appsec.isUserBlocked({id: credentials.email, email: credentials.email})) { 
-          console.log(`User ${credentials.email} is blocked`);
+        if (tracer.appsec.isUserBlocked({id: user?.id, email: credentials.email})) { 
+          console.log(`User ${user?.id} is blocked`);
           return tracer.appsec.blockRequest(); // Send blocking response 
         }
 

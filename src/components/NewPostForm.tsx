@@ -37,7 +37,7 @@ export const NewPostForm: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          sessionId: session?.user?.id,
+          userId: session?.user?.id,
           userName: session?.user?.name,
           userEmail: session?.user?.email,
         }),
