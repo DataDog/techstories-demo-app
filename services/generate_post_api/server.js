@@ -1,15 +1,8 @@
-const crypto = require('crypto');
-const tracer = require("dd-trace").init();
-
-// const tracer = require('dd-trace').init({
-//   appsec: {
-//     blockedTemplateJson: './custom_blocked_response.json'
-//   }
-// })
-
+const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
+const fetch = require("node-fetch");
+// const AWS = require("aws-sdk"); // Uncomment this when using AWS Secrets Manager
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -17,20 +10,92 @@ const port = process.env.PORT || 3002;
 app.use(cors());
 app.use(express.json());
 
+/**
+ * 🚨 BAD PRACTICE: Hardcoded JWT (Security Vulnerability)
+ * This JWT is embedded in the code, making it easy for attackers to steal and misuse.
+ */
+const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // ⚠️ Hardcoded token
+
+// Function to generate a cryptographically secure session ID
 function generateSessionId() {
-  return crypto.randomBytes(16).toString('hex'); // Generates a 32-character hexadecimal string
+  return crypto.randomBytes(16).toString("hex");
 }
 
-function getGeneratedPost(posts) {
-  // In Demo - read the JSON file containing demo posts
-  // Represents a function that makes a call to a third-party LLM
-  const allPosts = JSON.parse(fs.readFileSync("demo_posts.json", "utf-8"));
-  const randomIndex = Math.floor(Math.random() * allPosts.length);
-  return allPosts[randomIndex];
+// Function to call a third-party API using the hardcoded JWT (Insecure)
+async function callLLMApi(userEmail) {
+  console.log(`🚨 Calling third-party API INSECURELY for ${userEmail}`);
+
+  const response = await fetch("https://thirdparty.com/api/generate", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${HARDCODED_JWT}`, // ⚠️ Hardcoded JWT being used here
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userEmail }),
+  });
+
+  if (!response.ok) {
+    console.error("Error calling third-party API", response.status);
+    return null;
+  }
+
+  return await response.json();
 }
+
+/* 
+🟢 GOOD PRACTICE: Secure JWT Handling with AWS Secrets Manager (Uncomment to use!)
+This approach securely retrieves the JWT from AWS Secrets Manager instead of hardcoding it.
+
+const secretsManager = new AWS.SecretsManager({
+  region: "us-east-1", // Change to your AWS region
+});
+
+// Function to retrieve JWT securely from AWS Secrets Manager
+async function getJWTFromSecretsManager() {
+  try {
+    const secretData = await secretsManager
+      .getSecretValue({ SecretId: "ThirdPartyAPIJWT" }) // Stored secret name
+      .promise();
+
+    if (secretData.SecretString) {
+      const parsedSecret = JSON.parse(secretData.SecretString);
+      return parsedSecret.JWT_TOKEN; // Assuming { "JWT_TOKEN": "actual_jwt_here" }
+    }
+  } catch (error) {
+    console.error("Error retrieving JWT from Secrets Manager:", error);
+    return null;
+  }
+}
+
+// Function to call a third-party API securely using AWS Secrets Manager
+async function callLLMApi(userEmail) {
+  console.log(`🟢 Calling third-party API SECURELY for ${userEmail}`);
+
+  const jwtToken = await getJWTFromSecretsManager();
+  if (!jwtToken) {
+    console.error("Failed to retrieve JWT from Secrets Manager.");
+    return null;
+  }
+
+  const response = await fetch("https://thirdparty.com/api/generate", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${jwtToken}`, // 🟢 Securely retrieved JWT
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userEmail }),
+  });
+
+  if (!response.ok) {
+    console.error("Error calling third-party API", response.status);
+    return null;
+  }
+
+  return await response.json();
+}
+*/
 
 app.post("/generate_post", async (req, res) => {
-  // Extract user data from the request body
   const { userId, userName, userEmail } = req.body;
 
   if (!userEmail || !userId) {
@@ -39,30 +104,25 @@ app.post("/generate_post", async (req, res) => {
 
   console.log(`Generating post for user: ${userEmail}`);
 
-  user = {
+  const user = {
     id: userId,
     name: userName,
     email: userEmail,
     session_id: generateSessionId(),
   };
 
-  if (tracer.appsec.isUserBlocked(user)) { 
-    console.log(`User ${userEmail} is blocked`);
-    return tracer.appsec.blockRequest(req, res); // Blocking response is sent with status code 403
+  // Call third-party API
+  const apiResponse = await callLLMApi(userEmail);
+  if (!apiResponse) {
+    return res.status(500).json({ error: "Failed to retrieve data from third-party API" });
   }
 
-  // If user is not blocked, continue with the generate_post request
-  const eventName = "activity.call_llm_api";
-  tracer.appsec.trackCustomEvent(eventName);
-
-  // Return generated post
-  const post = getGeneratedPost();
-  
-  res.json({ post: post });
+  res.json({ message: "Post generated successfully", thirdPartyResponse: apiResponse });
 });
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
 
 

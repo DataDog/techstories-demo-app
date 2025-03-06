@@ -60,8 +60,19 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        
         console.log("Got user", user);
         console.log(user);
+
+        // 🚨 Non-compliant code example
+        if (user.email) {
+          localStorage.setItem("user", user.email); 
+        }
+
+        // ✅ Compliant code example
+        // if (user.id) {
+        //   localStorage.setItem("id", user.id); 
+        // }
 
         // Trace successful user authentication event before returning token
         tracer.appsec.trackUserLoginSuccessEvent({id: user.id, email: user.email, name: user.name}) 
