@@ -11,7 +11,6 @@ app = Flask(__name__)
 def hello():
     return "Hello, World!"
 
-# 🚨 Vulnerability: `sqlalchemy-injection`
 @app.route('/save_referral', methods=['POST'])
 def save_referral():
     referral_email = request.form.get('referral')
@@ -35,7 +34,6 @@ def save_referral():
     return "Referral saved securely!"
 """
 
-# 🚨 Vulnerability: `requests-http`
 @app.route('/call_referral_api', methods=['POST'])
 def call_referral_api():
     referral_email = request.form.get('referral')
@@ -51,12 +49,10 @@ def call_referral_api():
     return response.text
 """
 
-# 🚨 Vulnerability: `os-system-from-request`
 @app.route('/log_with_os', methods=['POST'])
 def log_with_os():
     referral_email = request.form.get('referral')
-    # ❌ Untrusted input in system command (OS Command Injection Risk)
-    os.system(f'logger "Referral received: {referral_email}"')  # 🚨 Dangerous: User input in system command
+    os.system(f'logger "Referral received: {referral_email}"') 
 
     return "Referral logged."
 
@@ -70,12 +66,11 @@ def log_with_os():
     return "Logged securely!"
 """
 
-# 🚨 Vulnerability: `cookie-injection`
 @app.route('/set_cookie', methods=['POST'])
 def set_cookie():
     referral_email = request.form.get('referral')
     resp = make_response("Cookie set!")
-    resp.set_cookie("referral_email", referral_email)  # ❌ User input directly in cookies
+    resp.set_cookie("referral_email", referral_email)  
     return resp
 
 """
@@ -89,7 +84,7 @@ def set_cookie():
 """
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=3003)  # 🚨 `listen-all-interfaces` triggered!
+    app.run(host="0.0.0.0", port=3003)  
 """
 # ✅ Secure Fix: Bind to localhost instead of all interfaces
 if __name__ == '__main__':

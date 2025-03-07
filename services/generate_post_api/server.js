@@ -10,10 +10,6 @@ const port = process.env.PORT || 3002;
 app.use(cors());
 app.use(express.json());
 
-/**
- * 🚨 BAD PRACTICE: Hardcoded JWT (Security Vulnerability)
- * This JWT is embedded in the code, making it easy for attackers to steal and misuse.
- */
 const HARDCODED_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // ⚠️ Hardcoded token
 
 // Function to generate a cryptographically secure session ID
