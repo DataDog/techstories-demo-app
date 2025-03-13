@@ -3,7 +3,7 @@ services:
     image: gcr.io/datadoghq/agent:7.53.0
     environment:
       - DD_API_KEY
-      - DD_HOSTNAME=csm-threats-lab-vm
+      - DD_HOSTNAME=workload-protection-lab-vm
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
       - DD_RUNTIME_SECURITY_CONFIG_ENABLED=true
@@ -14,7 +14,7 @@ services:
       - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
       - DD_CONTAINER_LABELS_AS_TAGS={"my.custom.label.team":"team"}
       - DD_CONTAINER_EXCLUDE="name:datadog-agent"
-      - DD_TAGS=${DD_TAGS-env:csm-threats-course}
+      - DD_TAGS=${DD_TAGS-env:workload-protection-course}
       - DD_CLOUD_PROVIDER_METADATA=[]
     pid: "host"
     ports:
