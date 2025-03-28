@@ -63,12 +63,15 @@ export const authOptions: NextAuthOptions = {
         
         console.log("Got user", user);
         console.log(user);
-
+        
+        // ❌ Non-compliant code example
+        
         if (user.email) {
           localStorage.setItem("user", user.email); 
         }
 
-        // ✅ Compliant code example
+        // ✅ Compliant code example - use ID instead of email
+
         // if (user.id) {
         //   localStorage.setItem("id", user.id); 
         // }

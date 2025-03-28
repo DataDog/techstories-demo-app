@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import json
 import os
-import random  # ⚠️ Insecure session ID generator
+import random  
 from datetime import datetime
 import ddtrace
 
