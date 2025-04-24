@@ -64,9 +64,7 @@ export const authOptions: NextAuthOptions = {
         console.log(user);
 
         // Trace successful user authentication event before returning token
-        tracer.appsec.trackUserLoginSuccessEvent({id: user.id, email: user.email, name: user.name}) 
-      }
-      return token;
+        g token;
     },
   },
   secret: env.NEXTAUTH_SECRET,
