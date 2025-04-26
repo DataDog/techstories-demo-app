@@ -1,20 +1,72 @@
+version: "3.7"
 services:
+  dd-agent:
+    image: gcr.io/datadoghq/agent:7.56.0
+    environment:
+      - DD_API_KEY
+      - DD_HOSTNAME
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_INSIDE_CI=${DD_INSIDE_CI:-false}
+      - HOST_ROOT='/host/root'
+    pid: "host"
+    ports:
+      - "8126:8126/tcp"
+      - "8125:8125/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /:/host/root:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /etc/os-release:/etc/os-release
   db:
-    image: postgres:13-alpine
+    image: postgres:15
     restart: always
     environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      POSTGRES_DB: db
+      - POSTGRES_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_DB=db
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - ./services/postgres/db_data:/var/lib/postgresql/data
+      - ./services/postgres/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
+    depends_on:
+      - dd-agent
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "postgresql", "service": "database"}]'
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "database"
+      com.datadoghq.tags.version: "15"
+      com.datadoghq.ad.check_names: '["postgres"]'
+      com.datadoghq.ad.init_configs: "[{}]"
+      com.datadoghq.ad.instances: '[{"host":"%%host%%", "port":5432,"username":"datadog","password":"datadog"}]'
   quotes_api:
     build: ./services/quotes_api
+    command: npm run start
     restart: always
+    volumes:
+      - ./services/quotes_api/server.js:/app/server.js
     ports:
       - "3001:3001"
+    depends_on:
+      - dd-agent
     environment:
       - PORT=3001
-    command: npm run start
+      - DD_ENV=${DD_ENV}
+      - DD_SERVICE=quotes-api
+      - DD_VERSION=1.0.0
+      - DD_LOGS_INJECTION=true
+      - DD_PROFILING_ENABLED=true
+      - DD_AGENT_HOST=datadog
+    labels:
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "quotes-api"
+      com.datadoghq.tags.version: "1.0.0"
+      com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
