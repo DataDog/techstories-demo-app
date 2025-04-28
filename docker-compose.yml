@@ -23,8 +23,6 @@ services:
       - DD_SERVICE=quotes-api
       - DD_APPSEC_ENABLED=true
     command: npm run start
-    depends_on:
-      - datadog-agent
   generate_posts_api:
     build: ./services/generate_post_api
     restart: always
@@ -38,8 +36,6 @@ services:
       - DD_SERVICE=generate-posts-api
       - DD_APPSEC_ENABLED=true
     command: npm run start
-    depends_on:
-      - datadog-agent
   referrals:
     build: ./services/referrals
     restart: always
@@ -55,36 +51,3 @@ services:
       - DD_SERVICE=referrals
       - DD_APPSEC_ENABLED=true
     command: ["ddtrace-run", "flask", "run", "--host=0.0.0.0", "--port=3003"]
-    depends_on:
-      - datadog-agent
-  messaging_api:
-    build: ./services/messaging_api
-    restart: always
-    ports:
-      - "3004:3004"
-    environment:
-      - PORT=3004
-      - DD_AGENT_HOST=datadog-agent
-      - DD_TRACE_AGENT_PORT=8126
-      - DD_ENV=production
-      - DD_SERVICE=messaging-api
-      - DD_APPSEC_ENABLED=true
-    command: npm run start
-    depends_on:
-      - datadog-agent
-  datadog-agent:
-    image: gcr.io/datadoghq/agent:7.53.0
-    environment:
-      - DD_API_KEY
-      - DD_APP_KEY
-      - DD_APM_ENABLED=true
-      - DD_APM_NON_LOCAL_TRAFFIC=true
-      - DD_LOGS_ENABLED=true
-      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-    ports:
-      - "8126:8126/tcp"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /proc/:/host/proc/:ro
-      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
