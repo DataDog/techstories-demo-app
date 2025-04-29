@@ -23,6 +23,10 @@ const quotes = [
   "\"Why couldn't the programmer dance at the party? He didn't get Arrays.\" - Arthur Array",
 ];
 
+app.get("/hello", async (req, res) => {
+  res.json({ message: "Hello from Quotes API!" });
+});
+
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
   res.json({ quote: quotes[randomIndex] });

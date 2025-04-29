@@ -1,12 +1,6 @@
 const crypto = require('crypto');
 const tracer = require("dd-trace").init();
 
-// const tracer = require('dd-trace').init({
-//   appsec: {
-//     blockedTemplateJson: './custom_blocked_response.json'
-//   }
-// })
-
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -29,6 +23,10 @@ function getGeneratedPost(posts) {
   return allPosts[randomIndex];
 }
 
+app.get("/hello", async (req, res) => {
+  res.json({ message: "Hello from Generate Post API!" });
+});
+
 app.post("/generate_post", async (req, res) => {
   // Extract user data from the request body
   const { userId, userName, userEmail } = req.body;
@@ -45,15 +43,6 @@ app.post("/generate_post", async (req, res) => {
     email: userEmail,
     session_id: generateSessionId(),
   };
-
-  if (tracer.appsec.isUserBlocked(user)) { 
-    console.log(`User ${userEmail} is blocked`);
-    return tracer.appsec.blockRequest(req, res); // Blocking response is sent with status code 403
-  }
-
-  // If user is not blocked, continue with the generate_post request
-  const eventName = "activity.call_llm_api";
-  tracer.appsec.trackCustomEvent(eventName);
 
   // Return generated post
   const post = getGeneratedPost();
