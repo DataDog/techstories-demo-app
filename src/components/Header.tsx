@@ -21,9 +21,7 @@ export const Header: React.FC = () => {
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
-  const REFERRAL_URL = process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL
-      ? `${process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL}/refer_friends`
-      : "http://127.0.0.1:3003/refer_friends";
+  const REFERRAL_URL = "/api/referral-link";
 
   return (
     <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
