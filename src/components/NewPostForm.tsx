@@ -26,12 +26,9 @@ export const NewPostForm: React.FC = () => {
 
   const generatePost = async () => {
     setErrorMessage(null); // Reset error message
-    const URL = process.env.NEXT_PUBLIC_GENERATE_POST_API_URL
-      ? `${process.env.NEXT_PUBLIC_GENERATE_POST_API_URL}/generate_post`
-      : "http://localhost:3002/generate_post";
-    
+  
     try {
-      const response = await fetch(URL, {
+      const response = await fetch("/api/generate-post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,9 +39,9 @@ export const NewPostForm: React.FC = () => {
           userEmail: session?.user?.email,
         }),
       });
-
+  
       const generatedPostResponse = await response.json();
-
+  
       if (!response.ok) {
         if (generatedPostResponse?.errors && generatedPostResponse.errors.length > 0) {
           const { title, detail } = generatedPostResponse.errors[0];
@@ -55,17 +52,17 @@ export const NewPostForm: React.FC = () => {
         }
         return;
       }
-
+  
       // Add generated post content to form
       setTitle(generatedPostResponse.post.title);
       setContent(generatedPostResponse.post.content);
-
+  
     } catch (error) {
       console.error('Failed to generate post content', error);
       setErrorMessage("An error occurred while generating the post content.");
     }
   };
-
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
