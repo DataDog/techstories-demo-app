@@ -9,26 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      DD_ENV: github-actions
-      DD_SERVICE: techstories
-      DD_API_KEY: ${DD_API_KEY}
-      DD_APP_KEY: ${DD_APP_KEY}
-      DATADOG_API_KEY: ${DD_API_KEY}
-      DD_INSIDE_CI: true
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      DATABASE_URL: postgresql://user:password@127.0.0.1:5432/db?schema=techstories
-      NEXTAUTH_SECRET: secret
-      NEXTAUTH_URL: http://localhost:3000
-      NEXT_PUBLIC_QUOTES_API_URL: http://localhost:3001
-      NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_DD_SERVICE_NAME: techstories
-      NEXT_PUBLIC_DD_ENV: development
-      NEXT_PUBLIC_DD_VERSION: 1.0.0
-      NEXT_PUBLIC_DD_SITE: datadoghq.com
-      NEXT_PUBLIC_DD_CLIENT_TOKEN: ${DD_CLIENT_TOKEN}
-      NEXT_PUBLIC_DD_RUM_APPLICATION_ID: ${DD_RUM_APPLICATION_ID}
     steps:
       - uses: actions/checkout@v4
       - name: Configure Datadog Test Optimization
@@ -49,26 +29,8 @@ jobs:
       - name: Run Tests
         run: npm run test:ci
         env:
-          DD_ENV: github-actions
-          DD_SERVICE: techstories
-          DD_API_KEY: ${DD_API_KEY}
-          DD_APP_KEY: ${DD_APP_KEY}
-          DATADOG_API_KEY: ${DD_API_KEY}
-          DD_INSIDE_CI: true
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          DATABASE_URL: postgresql://user:password@127.0.0.1:5432/db?schema=techstories
-          NEXTAUTH_SECRET: secret
-          NEXTAUTH_URL: http://localhost:3000
-          NEXT_PUBLIC_QUOTES_API_URL: http://localhost:3001
-          NEXT_TELEMETRY_DISABLED: 1
           NODE_OPTIONS: "-r dd-trace/ci/init"
         continue-on-error: true
-      - name: Print Test Results
-        run: |
-          echo "Test Results:"
-          echo "============="
-          cat coverage/lcov-report/index.html
       - name: Stop Services
         run: docker compose down
       - name: Print Test Summary
