@@ -4,14 +4,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const backendRes = await fetch(
-      process.env.INTERNAL_REFERRALS_API_URL || "http://localhost:3003/refer_friends",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(req.body),
-      }
-    );
+    const backendUrl = process.env.INTERNAL_REFERRALS_API_URL
+      ? `${process.env.INTERNAL_REFERRALS_API_URL}/refer_friends`
+      : "http://localhost:3003/refer_friends";
+
+    const backendRes = await fetch(backendUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
 
     const result = await backendRes.json();
     res.status(backendRes.status).json(result);
