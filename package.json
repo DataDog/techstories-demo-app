@@ -22,6 +22,7 @@
     "dd-e2e": "NODE_OPTIONS=\"-r dd-trace/ci/init\" DD_ENV=${DD_ENV} DD_SERVICE=${DD_SERVICE} DD_CIVISIBILITY_AGENTLESS_ENABLED=true DD_API_KEY=${DD_API_KEY} DD_APPLICATION_KEY=${DD_APP_KEY} yarn e2e:headless"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.799.0",
     "@headlessui/react": "^1.7.14",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^5.7.1",

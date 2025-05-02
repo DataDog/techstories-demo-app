@@ -21,7 +21,6 @@ export const Header: React.FC = () => {
 const Auth: React.FC = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
-  const REFERRAL_URL = "/api/referral-link";
 
   return (
     <div className="my-2 flex flex-wrap items-center gap-4 md:my-0 md:flex-row">
@@ -41,7 +40,7 @@ const Auth: React.FC = () => {
       </button>
       {sessionData && (
               <a
-                href={`${REFERRAL_URL}?email=${encodeURIComponent(sessionData.user.email ?? '')}`}
+                href={`/referrals?email=${encodeURIComponent(sessionData.user.email ?? '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border border-black px-2 py-1 underline transition-all hover:bg-neutral-400"

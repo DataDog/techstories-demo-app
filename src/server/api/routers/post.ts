@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+
+const sqs = new SQSClient({ region: "us-east-1" });
+const QUEUE_URL = process.env.INTERNAL_KEYWORD_INSIGHTS_QUEUE_URL!;
 
 import {
   createTRPCRouter,
@@ -49,11 +53,9 @@ export const postRouter = createTRPCRouter({
     }),
 
   createPost: protectedProcedure
-    .input(
-      z.object({ title: z.string(), content: z.string(), slug: z.string() })
-    )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.post.create({
+    .input(z.object({ title: z.string(), content: z.string(), slug: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.create({
         data: {
           title: input.title,
           content: input.content,
@@ -65,6 +67,23 @@ export const postRouter = createTRPCRouter({
           },
         },
       });
+  
+      // Send to SQS for keyword analysis service
+      try {
+        const command = new SendMessageCommand({
+          QueueUrl: QUEUE_URL,
+          MessageBody: JSON.stringify({
+            title: input.title,
+            content: input.content,
+          }),
+        });
+  
+        await sqs.send(command);
+      } catch (err) {
+        console.error("Failed to send post to SQS:", err);
+      }
+  
+      return post;
     }),
 
   addVote: protectedProcedure
