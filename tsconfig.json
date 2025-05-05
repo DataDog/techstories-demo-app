@@ -30,7 +30,8 @@
     "./src/**/*.mjs",
     "./prisma/**/*.ts",
     "./cypress/**/*.ts",
-    "./cypress.config.ts"
+    "./cypress.config.ts",
+    "global.d.ts"
   ],
   "exclude": ["node_modules", "src/*.test.ts"],
   "types": ["node", "jest", "@testing-library/jest-dom"]
