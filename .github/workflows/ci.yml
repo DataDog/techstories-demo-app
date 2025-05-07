@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Unit Tests
+        run: npm run test:ci
+        env:
+          DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?schema=techstories
+          NEXTAUTH_URL: http://localhost:3000
+
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Services
+        run: docker compose up -d
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm install
+      - name: Prepare Database
+        run: npm run db-prep
+      - name: Run Integration Tests
+        run: npm run test:integration
+        env:
+          NODE_ENV: test
+          NEXTAUTH_URL: http://localhost:3000
+          DATABASE_URL: postgres://user:password@localhost:5432/db?schema=techstories
+      - name: Stop Services
+        run: docker compose down

@@ -14,12 +14,11 @@
     "test": "NODE_OPTIONS=\"--max-old-space-size=12288 ${NODE_OPTIONS:-}\" jest",
     "test:watch": "jest --watch",
     "test:ci": "NODE_OPTIONS=\"--max-old-space-size=12288 ${NODE_OPTIONS:-}\" jest --ci --detectOpenHandles --coverage --collectCoverageFrom=src/**/*.{ts,tsx}",
+    "test:integration": "jest src/__tests__/integration",
     "e2e": "cypress open --e2e",
     "e2e:headless": "start-server-and-test 'npm run dev' 3000 'cypress run --e2e --browser chromium --headless'",
     "component": "cypress open --component",
-    "component:headless": "cypress run --component",
-    "dd-test": "NODE_OPTIONS=\"-r dd-trace/ci/init\" DD_ENV=${DD_ENV} DD_SERVICE=${DD_SERVICE} DD_CIVISIBILITY_AGENTLESS_ENABLED=true DD_API_KEY=${DD_API_KEY} DD_APPLICATION_KEY=${DD_APP_KEY} npm run test:ci",
-    "dd-e2e": "NODE_OPTIONS=\"-r dd-trace/ci/init\" DD_ENV=${DD_ENV} DD_SERVICE=${DD_SERVICE} DD_CIVISIBILITY_AGENTLESS_ENABLED=true DD_API_KEY=${DD_API_KEY} DD_APPLICATION_KEY=${DD_APP_KEY} npm run e2e:headless"
+    "component:headless": "cypress run --component"
   },
   "dependencies": {
     "@datadog/browser-logs": "^6.0.0",
