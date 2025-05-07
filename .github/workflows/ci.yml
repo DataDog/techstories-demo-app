@@ -8,6 +8,9 @@ on:
 env:
   DATABASE_URL: postgres://user:password@localhost:5432/db?schema=techstories
   NEXTAUTH_URL: http://localhost:3000
+  POSTGRES_PASSWORD: password
+  POSTGRES_USER: user
+  POSTGRES_DB: db
 
 jobs:
   unit-test:
