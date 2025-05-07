@@ -14,6 +14,27 @@ describe("QuoteBar Integration", () => {
     expect(data.quote.length).toBeGreaterThan(0);
   });
 
+  // Flaky: sometimes times out waiting for the API (simulates network slowness)
+  test("flaky: sometimes times out waiting for quote API", async () => {
+    const shouldTimeout = Math.random() > 0.5;
+    const fetchQuote = fetch(QUOTES_API_URL).then((res) => res.json());
+    if (shouldTimeout) {
+      await expect(
+        Promise.race([
+          fetchQuote,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout")), 100)
+          ),
+        ])
+      ).rejects.toThrow("Timeout");
+    } else {
+      const data = await fetchQuote;
+      expect(data).toHaveProperty("quote");
+      expect(typeof data.quote).toBe("string");
+      expect(data.quote.length).toBeGreaterThan(0);
+    }
+  });
+
   // Intentionally incorrect test: will always fail
   test("always fails: expects quote to be empty", async () => {
     const response = await fetch(QUOTES_API_URL);
