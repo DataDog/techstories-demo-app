@@ -5,6 +5,10 @@ on:
     branches: [main]
   push:
 
+env:
+  DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?schema=techstories
+  NEXTAUTH_URL: http://localhost:3000
+
 jobs:
   unit-test:
     runs-on: ubuntu-latest
@@ -18,8 +22,9 @@ jobs:
       - name: Run Unit Tests
         run: npm run test:ci
         env:
-          DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?schema=techstories
-          NEXTAUTH_URL: http://localhost:3000
+          NODE_ENV: test
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
 
   integration-test:
     runs-on: ubuntu-latest
@@ -38,7 +43,7 @@ jobs:
         run: npm run test:integration
         env:
           NODE_ENV: test
-          NEXTAUTH_URL: http://localhost:3000
-          DATABASE_URL: postgres://user:password@localhost:5432/db?schema=techstories
+          NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
       - name: Stop Services
         run: docker compose down
