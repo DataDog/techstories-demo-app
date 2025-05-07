@@ -1,64 +1,87 @@
-import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
-import { PostList } from "~/components/PostList";
+import { render, screen } from "@testing-library/react";
+import PostList from "~/components/PostList";
+import PostListItem from "~/components/PostListItem";
 
-const mockPosts = [
-  {
-    id: "1",
-    title: "First Post",
-    slug: "first-post",
-    author: { name: "Alice" },
-    createdAt: new Date(),
-    _count: { votes: 2, comments: 1 },
-    content: "Hello world",
-  },
-  {
-    id: "2",
-    title: "Second Post",
-    slug: "second-post",
-    author: { name: "Bob" },
-    createdAt: new Date(),
-    _count: { votes: 3, comments: 2 },
-    content: "Another post",
-  },
-];
+jest.mock("../../components/PostListItem", () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("PostList", () => {
-  test("renders a list of posts", () => {
-    render(<PostList posts={mockPosts as any} />);
-    expect(screen.getByText("First Post")).toBeInTheDocument();
-    expect(screen.getByText("Second Post")).toBeInTheDocument();
+  it("displays 'No posts found' when posts array is empty", () => {
+    const emptyPosts = [];
+    render(<PostList posts={emptyPosts} />);
+    expect(screen.getByText("No posts found")).toBeInTheDocument();
   });
 
-  test("renders empty state", () => {
-    render(<PostList posts={[]} />);
-    expect(screen.getByText(/no posts found/i)).toBeInTheDocument();
+  it("renders PostListItem for each post when posts array is not empty", () => {
+    const postsMock = [
+      {
+        id: "1",
+        title: "Mock post 1",
+        slug: "mock-post-1",
+        content: "Mock post content 1",
+        authorId: "1",
+        author: { name: "Mock user 1", id: "1", email: "user1@example.com" },
+        createdAt: new Date(),
+        _count: { votes: 5, comments: 3 },
+      },
+      {
+        id: "2",
+        title: "Mock post 2",
+        slug: "mock-post-2",
+        content: "Mock post content 2",
+        authorId: "2",
+        author: { name: "Mock user 2", id: "2", email: "user2@example.com" },
+        createdAt: new Date(),
+        _count: { votes: 7, comments: 4 },
+      },
+    ];
+
+    render(<PostList posts={postsMock} />);
+
+    expect(PostListItem).toHaveBeenCalledTimes(postsMock.length);
+    postsMock.forEach((post) => {
+      expect(PostListItem).toHaveBeenCalledWith({ post }, {});
+    });
   });
 
-  test("flaky: sometimes simulates a slow load that causes a timeout", async () => {
-    const shouldTimeout = Math.random() > 0.5;
-    if (shouldTimeout) {
-      // Simulate a slow render (never renders posts)
-      render(<div>Loading...</div>);
-      await expect(
-        waitFor(
-          () => expect(screen.getByText("First Post")).toBeInTheDocument(),
-          { timeout: 100 }
-        )
-      ).rejects.toThrow();
+  it("flaky: sometimes expects PostListItem to be called, sometimes not", () => {
+    const postsMock = [
+      {
+        id: "1",
+        title: "Mock post 1",
+        slug: "mock-post-1",
+        content: "Mock post content 1",
+        authorId: "1",
+        author: { name: "Mock user 1", id: "1", email: "user1@example.com" },
+        createdAt: new Date(),
+        _count: { votes: 5, comments: 3 },
+      },
+      {
+        id: "2",
+        title: "Mock post 2",
+        slug: "mock-post-2",
+        content: "Mock post content 2",
+        authorId: "2",
+        author: { name: "Mock user 2", id: "2", email: "user2@example.com" },
+        createdAt: new Date(),
+        _count: { votes: 7, comments: 4 },
+      },
+    ];
+
+    render(<PostList posts={postsMock} />);
+
+    if (Math.random() > 0.5) {
+      // Simulate correct behavior
+      expect(PostListItem).toHaveBeenCalledTimes(postsMock.length);
     } else {
-      render(<PostList posts={mockPosts as any} />);
-      await waitFor(() =>
-        expect(screen.getByText("First Post")).toBeInTheDocument()
-      );
+      // Simulate a race condition or rendering bug
+      expect(PostListItem).not.toHaveBeenCalled();
     }
-  });
-
-  // Intentionally incorrect test: will always fail
-  test("always fails: expects a post that does not exist", () => {
-    render(<PostList posts={mockPosts as any} />);
-    expect(screen.getByText("This post does not exist")).toBeInTheDocument();
-    // To fix this test, change the expected text to one that actually exists:
-    // expect(screen.getByText('First Post')).toBeInTheDocument();
   });
 });

@@ -57,14 +57,4 @@ describe("Database Integration", () => {
       });
     }
   });
-
-  // Intentionally incorrect test: will always fail
-  test("always fails: expects a user that does not exist", async () => {
-    const user = await prisma.user.findUnique({
-      where: { email: "doesnotexist@datadog-demo.com" },
-    });
-    expect(user).not.toBeNull(); // This will always fail
-    // To fix this test, expect user to be null:
-    // expect(user).toBeNull();
-  });
 });

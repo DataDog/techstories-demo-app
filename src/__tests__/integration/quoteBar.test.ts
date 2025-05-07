@@ -34,13 +34,4 @@ describe("QuoteBar Integration", () => {
       expect(data.quote.length).toBeGreaterThan(0);
     }
   });
-
-  // Intentionally incorrect test: will always fail
-  test("always fails: expects quote to be empty", async () => {
-    const response = await fetch(QUOTES_API_URL);
-    const data = await response.json();
-    expect(data.quote).toBe(""); // This will always fail if the API returns a real quote
-    // To fix this test, check for a non-empty quote:
-    // expect(data.quote.length).toBeGreaterThan(0);
-  });
 });
