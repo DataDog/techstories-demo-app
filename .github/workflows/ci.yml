@@ -6,7 +6,7 @@ on:
   push:
 
 env:
-  DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?schema=techstories
+  DATABASE_URL: postgres://user:password@localhost:5432/db?schema=techstories
   NEXTAUTH_URL: http://localhost:3000
 
 jobs:
