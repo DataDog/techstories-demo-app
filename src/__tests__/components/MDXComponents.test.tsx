@@ -27,10 +27,4 @@ describe("MDXComponents", () => {
       expect(screen.getByText("Flaky Heading")).toBeInTheDocument();
     }
   });
-
-  // Intentionally incorrect test: will always fail
-  test("always fails: expects a heading that does not exist", () => {
-    render(MDXComponents.h1({ children: "Hello World" }));
-    expect(screen.getByText("This heading does not exist")).toBeInTheDocument();
-  });
 });
