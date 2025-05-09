@@ -17,6 +17,8 @@ TechStories is a simple web application that allows users to post stories about 
   - [Prisma](https://www.prisma.io/)
   - [Cypress](https://www.cypress.io/)
   - [Jest](https://jestjs.io/)
+  - [NextAuth.js](https://next-auth.js.org/)
+  - [bcrypt](https://www.npmjs.com/package/bcrypt)
 
 - [PostgreSQL](https://www.postgresql.org/)
 
@@ -29,6 +31,35 @@ TechStories is a simple web application that allows users to post stories about 
 - CI Test Visibility
 - RUM
 - APM
+
+### Authentication Implementation
+
+The application uses NextAuth.js with a Credentials provider for authentication:
+- Password-based authentication with bcrypt hashing
+- JWT session strategy with 2-day expiration
+- Secure password validation and error handling
+- Sign-in and sign-up flows with form validation
+- Protected routes and API endpoints
+
+### Testing Strategy
+
+The application includes comprehensive test coverage:
+
+#### Unit Tests
+- Component testing for auth forms
+  * Form field validation
+  * Password matching
+  * Error handling
+  * Submission flows
+
+#### Integration Tests
+Includes intentionally flaky tests to simulate real-world scenarios:
+- Concurrent registration attempts (race conditions)
+- Database timeout simulation
+- Network latency effects
+- Session state race conditions
+
+These tests help identify potential issues in production environments.
 
 ## How do I run TechStories?
 
@@ -134,7 +165,7 @@ Use the following user stories to learn about the features of TechStories:
 1. Use the following credentials to log in:
 
   - Username: `alice.smith@example.com`
-  - Password: `password`
+  - Password: `redRose456`
 
 1. Click the "+ New Post" button in the top right corner of the page.
 
@@ -142,7 +173,10 @@ Use the following user stories to learn about the features of TechStories:
 
 1. You should be redirected to the home page, where you should see your story at the top of the list.
 
-> **Note:** You cannot register a new user at this time.
+You can also register a new account:
+1. Click "Sign in" and then "Sign up" to create a new account
+2. Fill in your email, name, and password
+3. After successful registration, you'll be automatically signed in
 
 ### As a logged-in user, I want to be able to vote on a story.
 
@@ -191,7 +225,7 @@ The TechStories repository is organized as follows:
 - `services` - Contains the Node.js microservice that serves inspirational quotes.
 
 - `src` - Contains the source code for the Next.js application.
-  - `__tests__` - Contains the unit tests for the application.
+  - `__tests__` - Contains the tests for the application.
   - `components` - Contains the React components for the application's UI and functionality.
   - `hooks` - Contains the logic for some of the functionality utilized by the components.
   - `layouts` - Contains the React components for the application's layouts.

@@ -13,7 +13,7 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("Header", () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
@@ -67,20 +67,20 @@ describe("Header", () => {
   });
 
   test("renders the user's name when signed in", () => {
-    process.env.TECHSTORIES_AUTH === "true" &&
-      (useSession as jest.Mock).mockReturnValueOnce({
-        data: {
-          user: {
-            name: "test user",
-            email: "name@example.com",
-            id: "1",
-          },
+    // Mock the session before rendering
+    (useSession as jest.Mock).mockReturnValue({
+      data: {
+        user: {
+          name: "test user",
+          email: "name@example.com",
+          id: "1",
         },
-      });
+      },
+      status: "authenticated",
+    });
 
     render(<Header />);
-
-    const name = screen.getByText(/test user/i);
+    const name = screen.getByText("test user");
     expect(name).toBeInTheDocument();
   });
 });

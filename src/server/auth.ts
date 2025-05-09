@@ -8,6 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { randomUUID, randomBytes } from "crypto";
+import bcrypt from "bcrypt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -82,20 +83,45 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials = { email: "", password: "" }, req) {
-        const user = await prisma.user.findUnique({
+        if (!credentials.email || !credentials.password) {
+          throw new Error("Missing email or password");
+        }
+
+        const user = (await prisma.user.findUnique({
           where: {
             email: credentials.email,
           },
-        });
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            password: true,
+          },
+        })) as {
+          id: string;
+          email: string;
+          name: string;
+          password: string;
+        } | null;
 
-        // check if password is `password`
-        if (user && credentials.password === "password") {
-          console.log("found user", user);
-          return user;
+        if (!user || !user.password) {
+          console.log("User not found or missing password:", credentials.email);
+          return null;
         }
 
-        // Return null if user data could not be retrieved
-        return null;
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isValid) {
+          console.log("Invalid password for user:", credentials.email);
+          return null;
+        }
+
+        // Return user object without password
+        const { password: _, ...userWithoutPassword } = user;
+        return userWithoutPassword;
       },
     }),
   ],

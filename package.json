@@ -18,7 +18,9 @@
     "e2e": "cypress open --e2e",
     "e2e:headless": "start-server-and-test 'npm run dev' 3000 'cypress run --e2e --browser chromium --headless'",
     "component": "cypress open --component",
-    "component:headless": "cypress run --component"
+    "component:headless": "cypress run --component",
+    "test:components": "jest --selectProjects components",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@datadog/browser-logs": "^6.0.0",
@@ -33,6 +35,7 @@
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "@uiw/react-md-editor": "^3.23.1",
+    "bcrypt": "^5.1.1",
     "cross-fetch": "^4.0.0",
     "next": "^13.2.4",
     "next-auth": "^4.21.0",
@@ -71,12 +74,14 @@
     "jest-environment-jsdom": "29.5.0",
     "jest-fetch-mock": "^3.0.3",
     "msw": "^1.2.2",
+    "node-mocks-http": "^1.17.2",
     "postcss": "^8.4.21",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
     "prisma": "^5.7.1",
     "start-server-and-test": "1.15.2",
     "tailwindcss": "^3.3.0",
+    "ts-jest": "^29.3.2",
     "tsx": "^3.12.7",
     "typescript": "^5.0.2"
   },

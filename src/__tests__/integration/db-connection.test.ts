@@ -7,7 +7,7 @@ describe("Database Integration", () => {
   beforeAll(async () => {
     // Seed a user
     await prisma.user.create({
-      data: { name: "Datadog Demo", email: testEmail },
+      data: { name: "Datadog Demo", email: testEmail, password: "password" },
     });
   });
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -37,7 +38,11 @@ export const SignInForm = () => {
     }
   };
   return (
-    <form className="space-y-6" onSubmit={(e) => void handleSubmit(e)}>
+    <form
+      className="space-y-6"
+      role="form"
+      onSubmit={(e) => void handleSubmit(e)}
+    >
       <h2 className="text-center text-4xl">Sign In</h2>
       {error && (
         <div className="rounded-md bg-red-50 p-4">
@@ -107,6 +112,15 @@ export const SignInForm = () => {
       >
         Sign in
       </button>
+      <p className="mt-4 text-center text-sm text-neutral-600">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/auth/signup"
+          className="font-semibold text-indigo-600 hover:text-indigo-500"
+        >
+          Sign up
+        </Link>
+      </p>
     </form>
   );
 };

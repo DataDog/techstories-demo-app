@@ -16,7 +16,10 @@ export const CommentForm: React.FC<CommentFormProps> = ({ postId, slug }) => {
   const context = api.useContext();
   const mutation = api.comment.createComment.useMutation({
     async onSuccess() {
-      await context.post.getPostBySlug.invalidate({ slug });
+      await Promise.all([
+        context.post.getPostBySlug.invalidate({ slug }),
+        context.comment.getCommentsByPostId.invalidate({ postId }),
+      ]);
     },
   });
 
