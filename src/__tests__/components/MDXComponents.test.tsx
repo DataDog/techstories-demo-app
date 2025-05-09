@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { MDXComponents } from "~/components/MDXComponents";
+import { useState, useEffect } from "react";
 
 describe("MDXComponents", () => {
   test("renders a heading", () => {
@@ -17,14 +18,22 @@ describe("MDXComponents", () => {
     expect(link).toHaveAttribute("href", "https://example.com");
   });
 
-  test("flaky: sometimes heading is missing children", () => {
-    const shouldOmitChildren = Math.random() > 0.5;
-    if (shouldOmitChildren) {
-      render(MDXComponents.h1({}));
-      expect(screen.queryByText("Flaky Heading")).not.toBeInTheDocument();
-    } else {
-      render(MDXComponents.h1({ children: "Flaky Heading" }));
-      expect(screen.getByText("Flaky Heading")).toBeInTheDocument();
-    }
+  test("bad test: forgets to wait for async update", () => {
+    const AsyncHeading = () => {
+      const [content, setContent] = useState("Loading...");
+
+      useEffect(() => {
+        setTimeout(() => {
+          setContent("Loaded Content");
+        }, 100);
+      }, []);
+
+      return <MDXComponents.h1>{content}</MDXComponents.h1>;
+    };
+
+    render(<AsyncHeading />);
+    // This will fail because we're checking for the updated content
+    // without waiting for the state update
+    expect(screen.getByText("Loaded Content")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, VotesOnPosts, Prisma } from "@prisma/client";
 
 // Flaky integration tests for Post and Comment models
 
@@ -51,117 +51,105 @@ describe("Post and Comment Integration (Flaky)", () => {
     }
   });
 
-  test("can create a comment (flaky: random failure)", async () => {
+  test("can create a comment", async () => {
     // Ensure post exists
     if (!testPostId) {
       const post = await prisma.post.create({
         data: {
-          title: "Backup Flaky Post",
-          content: "Backup post for flaky comment.",
-          slug: `backup-flaky-post-${Date.now()}`,
+          title: "Test Post",
+          content: "Test post for comments.",
+          slug: `test-post-${Date.now()}`,
           authorId: testUserId,
         },
       });
       testPostId = post.id;
     }
-    const shouldFail = Math.random() > 0.7;
-    if (shouldFail) {
-      // Simulate random DB error
-      await expect(
-        prisma.comment.create({
-          data: {
-            content: null as any, // Invalid on purpose
-            postId: testPostId,
-            authorId: testUserId,
-          },
-        })
-      ).rejects.toThrow();
-    } else {
-      const comment = await prisma.comment.create({
-        data: {
-          content: "This is a flaky comment.",
-          postId: testPostId,
-          authorId: testUserId,
-        },
-      });
-      expect(comment).not.toBeNull();
-      testCommentId = comment.id;
-    }
+
+    const comment = await prisma.comment.create({
+      data: {
+        content: "Test comment.",
+        postId: testPostId,
+        authorId: testUserId,
+      },
+    });
+    testCommentId = comment.id;
+    expect(comment).not.toBeNull();
   });
 
-  test("can vote on a post (flaky: race condition)", async () => {
+  test("can vote on a post", async () => {
     // Ensure post exists
     if (!testPostId) {
       const post = await prisma.post.create({
         data: {
-          title: "Another Flaky Post",
-          content: "Another post for voting.",
-          slug: `another-flaky-post-${Date.now()}`,
+          title: "Test Post",
+          content: "Test post for voting.",
+          slug: `test-post-${Date.now()}`,
           authorId: testUserId,
         },
       });
       testPostId = post.id;
     }
-    const shouldDeletePost = Math.random() > 0.5;
-    if (shouldDeletePost) {
-      await prisma.post.delete({ where: { id: testPostId } });
-    }
-    const vote = await prisma.votesOnPosts
-      .create({
-        data: {
-          postId: testPostId,
-          userId: testUserId,
-        },
-      })
-      .catch((e) => null);
-    if (shouldDeletePost) {
-      expect(vote).toBeNull(); // Should fail to vote if post was deleted
-      // Optionally, re-seed for other tests
-      const post = await prisma.post.create({
-        data: {
-          title: "Reseeded Flaky Post",
-          content: "Reseeded post for voting.",
-          slug: `reseeded-flaky-post-${Date.now()}`,
-          authorId: testUserId,
-        },
-      });
-      testPostId = post.id;
-    } else {
-      expect(vote).not.toBeNull();
-    }
+
+    // Create multiple vote operations simultaneously
+    const votePromises = Array(3)
+      .fill(null)
+      .map(
+        () =>
+          prisma.votesOnPosts
+            .create({
+              data: {
+                postId: testPostId,
+                userId: testUserId,
+              },
+            })
+            .catch((e): null => null) // Type-safe error handling
+      );
+
+    const results = await Promise.all(votePromises);
+    const successfulVotes = results.filter(
+      (vote): vote is VotesOnPosts => vote !== null
+    );
+    expect(successfulVotes).toHaveLength(1);
   });
 
-  test("can vote on a comment (flaky: intermittent failure)", async () => {
+  test("can vote on a comment", async () => {
     // Ensure comment exists
     if (!testCommentId) {
       const comment = await prisma.comment.create({
         data: {
-          content: "Backup flaky comment.",
+          content: "Test comment.",
           postId: testPostId,
           authorId: testUserId,
         },
       });
       testCommentId = comment.id;
     }
-    const shouldFail = Math.random() > 0.6;
-    if (shouldFail) {
-      // Simulate random error
-      await expect(
-        prisma.votesOnComments.create({
-          data: {
-            commentId: "nonexistent-id",
-            userId: testUserId,
-          },
-        })
-      ).rejects.toThrow();
-    } else {
-      const vote = await prisma.votesOnComments.create({
-        data: {
-          commentId: testCommentId,
-          userId: testUserId,
-        },
-      });
-      expect(vote).not.toBeNull();
-    }
+
+    const vote = await prisma.votesOnComments.create({
+      data: {
+        commentId: testCommentId,
+        userId: testUserId,
+      },
+    });
+    expect(vote).not.toBeNull();
+  });
+
+  test("fails with invalid comment data", async () => {
+    // Try to create a comment with invalid data
+    const invalidData: Prisma.CommentCreateInput = {
+      content: undefined as unknown as string, // TypeScript-safe way to create invalid data
+      post: {
+        connect: { id: testPostId },
+      },
+      author: {
+        connect: { id: testUserId },
+      },
+    };
+
+    const invalidCommentPromise = prisma.comment.create({
+      data: invalidData,
+    });
+
+    await expect(invalidCommentPromise).rejects.toThrow();
   });
 });
