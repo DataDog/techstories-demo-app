@@ -18,7 +18,7 @@ describe("MDXComponents", () => {
     expect(link).toHaveAttribute("href", "https://example.com");
   });
 
-  test("bad test: forgets to wait for async update", () => {
+  test("waits for update", () => {
     const AsyncHeading = () => {
       const [content, setContent] = useState("Loading...");
 

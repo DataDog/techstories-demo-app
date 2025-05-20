@@ -53,6 +53,7 @@ services:
     restart: always
     volumes:
       - ./services/quotes_api/server.js:/app/server.js
+      - /app/node_modules
     ports:
       - "3001:3001"
     depends_on:

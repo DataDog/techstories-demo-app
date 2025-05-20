@@ -25,7 +25,7 @@ describe("Post and Comment Integration (Flaky)", () => {
     await prisma.$disconnect();
   });
 
-  test("can create a post (flaky: random timeout)", async () => {
+  test("can create a post", async () => {
     const shouldTimeout = Math.random() > 0.6;
     const createPost = prisma.post.create({
       data: {

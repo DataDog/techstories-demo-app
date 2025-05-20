@@ -50,7 +50,7 @@ describe("PostList", () => {
     });
   });
 
-  it("flaky: sometimes expects PostListItem to be called, sometimes not", () => {
+  it("expects PostListItem to be called", () => {
     const postsMock = [
       {
         id: "1",

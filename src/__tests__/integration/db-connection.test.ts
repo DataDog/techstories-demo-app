@@ -78,7 +78,7 @@ describe("Database Integration", () => {
     expect(user && user.name).toBe("Datadog Demo");
   });
 
-  test("flaky: email uniqueness race condition", async () => {
+  test("should handleemail uniqueness race condition", async () => {
     const baseEmail = generateEmail("racetest", "datadog-demo.com");
 
     // Simulate race condition by trying to create two users with same email
