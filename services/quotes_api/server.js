@@ -26,8 +26,8 @@ const quotes = [
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
 
-  // 1 in 200 chance of error
-  if (Math.random() < 0.005) {
+  // 1 in 10 chance of error
+  if (Math.random() < 0.1) {
     console.log("Error: 500");
     res.status(500).json({ error: "Internal Server Error" });
     return;
