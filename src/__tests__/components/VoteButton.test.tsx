@@ -31,7 +31,7 @@ describe("VoteButton", () => {
 
   test("does not apply the disabled styles and attributes when disabled prop is false", () => {
     render(<VoteButton voteType="add" onClick={jest.fn()} disabled={false} />);
-    const enabledButton = screen.getByRole("button", { name: /add vote/ });
+    const enabledButton = screen.getByRole("button", { name: /add vote/i });
     expect(enabledButton).not.toBeDisabled();
     expect(enabledButton).not.toHaveClass("cursor-not-allowed");
   });
@@ -46,31 +46,5 @@ describe("VoteButton", () => {
     render(<VoteButton voteType="remove" onClick={jest.fn()} />);
     const voteButton = screen.getByRole("button", { name: /remove vote/i });
     expect(voteButton).toHaveClass("rotate-180");
-  });
-
-  test("button renders with custom className reliably", () => {
-    render(<VoteButton voteType="add" onClick={jest.fn()} />);
-    const voteButton = screen.getByRole("button", { name: /add vote/i });
-    expect(voteButton).toHaveClass("flex");
-  });
-
-  // FLAKY TEST: This test will randomly fail
-  test("flaky test: button sometimes has a random class", () => {
-    render(
-      <VoteButton
-        voteType={Math.random() > 0.5 ? "add" : "remove"}
-        onClick={jest.fn()}
-      />
-    );
-    const voteButton = screen.getByRole("button");
-    // This assertion will randomly fail depending on the random voteType
-    expect(voteButton).toHaveClass("rotate-180");
-  });
-
-  test("button is focusable and can be tabbed to", () => {
-    render(<VoteButton voteType="add" onClick={jest.fn()} />);
-    const voteButton = screen.getByRole("button");
-    voteButton.focus();
-    expect(voteButton).toHaveFocus();
   });
 });

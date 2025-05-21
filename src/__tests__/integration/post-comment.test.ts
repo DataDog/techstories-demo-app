@@ -26,7 +26,7 @@ describe("Post and Comment Integration (Flaky)", () => {
   });
 
   test("can create a post", async () => {
-    const shouldTimeout = Math.random() > 0.6;
+    const shouldTimeout = Math.random() > 0.5;
     const createPost = prisma.post.create({
       data: {
         title: "Flaky Post",

@@ -18,7 +18,7 @@ describe("MDXComponents", () => {
     expect(link).toHaveAttribute("href", "https://example.com");
   });
 
-  test("waits for update", () => {
+  test("waits for update", async () => {
     const AsyncHeading = () => {
       const [content, setContent] = useState("Loading...");
 
@@ -32,8 +32,6 @@ describe("MDXComponents", () => {
     };
 
     render(<AsyncHeading />);
-    // This will fail because we're checking for the updated content
-    // without waiting for the state update
-    expect(screen.getByText("Loaded Content")).toBeInTheDocument();
+    await screen.findByText("Loaded Content");
   });
 });
