@@ -27,7 +27,7 @@ jobs:
         
       # Cache Docker images using GitHub's cache
       - name: Cache Docker images
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/docker-images
           key: ${{ runner.os }}-docker-images-${{ hashFiles('docker-compose.yml') }}
