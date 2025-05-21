@@ -2,7 +2,7 @@ import { PrismaClient, VotesOnPosts, Prisma } from "@prisma/client";
 
 // Flaky integration tests for Post and Comment models
 
-describe("Post and Comment Integration (Flaky)", () => {
+describe("Post and Comment Integration", () => {
   const prisma = new PrismaClient();
   const testUserEmail = "flakyuser@datadog-demo.com";
   let testUserId: string;
