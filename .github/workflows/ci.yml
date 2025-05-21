@@ -23,16 +23,23 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      # Single compose build with basic caching
-      - name: Build and start services
-        env:
-          DOCKER_BUILDKIT: 1
-          COMPOSE_DOCKER_CLI_BUILD: 1
-        run: |
-          # Build only the quotes_api service (others are pre-built)
-          docker compose build --build-arg BUILDKIT_INLINE_CACHE=1 quotes_api
-          # Start all services
-          docker compose up -d
+
+      # Build only the custom service with caching
+      - name: Build and cache quotes_api
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/quotes_api
+          push: false
+          load: true
+          tags: quotes_api:latest
+          cache-from: type=gha,scope=quotes-api
+          cache-to: type=gha,scope=quotes-api,mode=max
+
+      # Pull pre-built images (this is fast)
+      - name: Pull external images
+        run: docker compose pull dd-agent db
+
+      # Start all services
       - name: Start Services
         run: docker compose up -d
       - uses: actions/setup-node@v4
