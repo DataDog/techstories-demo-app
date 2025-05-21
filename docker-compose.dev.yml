@@ -73,7 +73,7 @@ services:
       com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
   techstories:
     build: ./
-    command: bash -c "npm run db-prep && npm run dev"
+    command: bash -c "wait-for-it db:5432 -- npm run db-prep && npm run dev"
     restart: always
     ports:
       - "3000:3000"
