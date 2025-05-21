@@ -21,46 +21,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # Cache Docker images
+      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
-      # Cache Docker images using GitHub's cache
-      - name: Cache Docker images
+      # Cache Docker layers
+      - name: Cache Docker layers
         uses: actions/cache@v4
         with:
-          path: /tmp/docker-images
-          key: ${{ runner.os }}-docker-images-${{ hashFiles('docker-compose.yml') }}
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('docker-compose*.yml', 'Dockerfile') }}
           restore-keys: |
-            ${{ runner.os }}-docker-images-
+            ${{ runner.os }}-buildx-
       
-      # Load cached Docker images if they exist
-      - name: Load Docker images from cache
-        run: |
-          if [ -d "/tmp/docker-images" ]; then
-            for image in /tmp/docker-images/*.tar; do
-              [ -e "$image" ] && docker load -i $image || true
-            done
-          fi
-      
-      # Start services using Docker Compose
+      # Start services using Docker Compose with layer caching
       - name: Start Services
         run: |
           # Enable BuildKit
           export DOCKER_BUILDKIT=1
           export COMPOSE_DOCKER_CLI_BUILD=1
           
-          # Start the services
+          # Start services with build cache
+          docker compose build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max
           docker compose up -d
-      
-      # Save Docker images to cache
-      - name: Save Docker images to cache
-        if: always()
-        run: |
-          mkdir -p /tmp/docker-images
-          docker images --format "{{.Repository}}:{{.Tag}}" | grep -v '<none>' | while read -r image; do
-            docker save "$image" -o "/tmp/docker-images/$(echo $image | tr '/:' '_').tar"
-          done
+          
+          # Replace old cache with new cache
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       
       # Cache Node modules
       - name: Setup Node
@@ -71,8 +58,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          # Use a simple key if package-lock.json doesn't exist
+          path: |
+            node_modules
+            ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') || github.sha }}
           restore-keys: |
             ${{ runner.os }}-node-
