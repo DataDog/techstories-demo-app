@@ -37,7 +37,6 @@ jobs:
           cache-to: type=gha,scope=quotes-api,mode=max
           build-args: |
             BUILDKIT_INLINE_CACHE=1
-          outputs: type=docker,annotation-index.org.opencontainers.image.description="Build completed at $(date)"
 
       # Pull pre-built images (this is fast)
       - name: Pull external images
