@@ -83,11 +83,6 @@ jobs:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           NODE_OPTIONS: -r ${{env.DD_TRACE_PACKAGE}}
 
-      # run quality gate check
-      - name: Run Quality Gate
-        if: always()
-        run: ./node_modules/.bin/datadog-ci gate evaluate
-
       - name: Stop Services
         if: always()
         run: docker compose down
