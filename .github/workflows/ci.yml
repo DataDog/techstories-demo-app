@@ -62,22 +62,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Cache global npm
-        uses: actions/cache@v4
-        id: cache-global-npm
-        with:
-          path: /usr/local/lib/node_modules/@datadog
-          key: ${{ runner.os }}-npm-datadog-ci
-          restore-keys: |
-            ${{ runner.os }}-npm-datadog-ci
-
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
-
-      - name: Install datadog-ci
-        if: steps.cache-global-npm.outputs.cache-hit != 'true'
-        run: npm install -g @datadog/datadog-ci
 
       - name: Prepare Database
         run: npm run db-prep
@@ -95,6 +82,12 @@ jobs:
           NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
           DATABASE_URL: ${{ env.DATABASE_URL }}
           NODE_OPTIONS: -r ${{env.DD_TRACE_PACKAGE}}
+
+      # run quality gate check
+      - name: Run Quality Gate
+        if: always()
+        run: ./node_modules/.bin/datadog-ci gate evaluate
+
       - name: Stop Services
         if: always()
         run: docker compose down

@@ -52,6 +52,7 @@
     "@babel/core": "^7.22.5",
     "@babel/plugin-transform-modules-commonjs": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
+    "@datadog/datadog-ci": "^3.6.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
