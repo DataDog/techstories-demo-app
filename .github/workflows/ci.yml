@@ -15,7 +15,10 @@ env:
   POSTGRES_USER: user
   POSTGRES_DB: db
   DD_API_KEY: ${{ secrets.DD_API_KEY }}
+  DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
   DD_INSIDE_CI: true
+  DD_HOSTNAME: ${{ github.workflow }}-${{ github.ref }}
+  DD_ENV: CI
 
 jobs:
   test:
@@ -54,16 +57,32 @@ jobs:
         uses: actions/cache@v4
         id: cache-node-modules
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          path: |
+            node_modules
+            ~/.npm-global
+          key: ${{ runner.os }}-node-modules-global-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-modules-global-
             ${{ runner.os }}-node-
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Install datadog-ci
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.npm-global
+          npm config set prefix '~/.npm-global'
+          npm install -g @datadog/datadog-ci
+
       - name: Prepare Database
         run: npm run db-prep
+      - name: Configure Datadog Test Optimization
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: js
+          api_key: ${{ env.DD_API_KEY }}
+          site: datadoghq.com
       - name: Run All Tests
         id: run_tests
         run: npm run test:ci
@@ -71,6 +90,7 @@ jobs:
           NODE_ENV: test
           NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          NODE_OPTIONS: -r ${{env.DD_TRACE_PACKAGE}}
       - name: Stop Services
         if: always()
         run: docker compose down
