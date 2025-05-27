@@ -66,18 +66,19 @@ jobs:
         uses: actions/cache@v4
         id: cache-global-npm
         with:
-          path: /usr/local/lib/node_modules
-          key: ${{ runner.os }}-global-npm-datadog-ci
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-cache-datadog-ci
           restore-keys: |
-            ${{ runner.os }}-global-npm-datadog-ci
+            ${{ runner.os }}-npm-cache-datadog-ci
 
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Install datadog-ci
-        if: steps.cache-global-npm.outputs.cache-hit != 'true'
-        run: npm install -g @datadog/datadog-ci
+        run: |
+          npm config set cache ~/.npm
+          npm install -g @datadog/datadog-ci
 
       - name: Prepare Database
         run: npm run db-prep
