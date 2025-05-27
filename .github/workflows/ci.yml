@@ -57,23 +57,32 @@ jobs:
         uses: actions/cache@v4
         id: cache-node-modules
         with:
-          path: |
-            node_modules
-            ~/.npm-global
-          key: ${{ runner.os }}-node-modules-global-${{ hashFiles('package-lock.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-global-
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-node-modules-
+
+      - name: Cache global npm
+        uses: actions/cache@v4
+        id: cache-global-npm
+        with:
+          path: ~/.npm-global
+          key: ${{ runner.os }}-global-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-global-npm-
+
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Install datadog-ci
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+      - name: Setup global npm directory
         run: |
           mkdir -p ~/.npm-global
           npm config set prefix '~/.npm-global'
-          npm install -g @datadog/datadog-ci
+
+      - name: Install datadog-ci
+        if: steps.cache-global-npm.outputs.cache-hit != 'true'
+        run: npm install -g @datadog/datadog-ci
 
       - name: Prepare Database
         run: npm run db-prep
