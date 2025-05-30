@@ -8,6 +8,10 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write # Required for cache operations
+
 env:
   DATABASE_URL: postgres://user:password@localhost:5432/db?schema=techstories
   NEXTAUTH_URL: http://localhost:3000
@@ -51,20 +55,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+
       # Cache node_modules directory
       - name: Cache node_modules
         uses: actions/cache@v4
         id: cache-node-modules
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-            ${{ runner.os }}-node-
+          path: "**/node_modules"
+          key: modules-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Debug Cache
+        run: |
+          echo "Cache Hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
+          echo "Cache Key: modules-${{ hashFiles('**/package-lock.json') }}"
+          echo "Node Modules Size: $(du -sh **/node_modules | sort -hr)"
+
       - name: Prepare Database
         run: npm run db-prep
       - name: Configure Datadog Test Optimization
