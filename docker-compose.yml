@@ -28,6 +28,11 @@ services:
   db:
     image: postgres:15
     restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       - POSTGRES_PASSWORD
       - POSTGRES_USER

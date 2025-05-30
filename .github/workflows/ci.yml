@@ -68,7 +68,7 @@ jobs:
 
       # Start all services
       - name: Start Services
-        run: docker compose up -d
+        run: docker compose up -d --wait
 
       - name: Prepare Database
         run: npm run db-prep
