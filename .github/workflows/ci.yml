@@ -38,8 +38,8 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          path: ${github.workspace}/node_modules
+          key: modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             modules-
 
