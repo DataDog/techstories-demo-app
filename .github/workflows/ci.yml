@@ -90,11 +90,16 @@ jobs:
       - name: Stop Services
         if: always()
         run: docker compose down
+      - name: Debug package files
+        if: always()
+        run: |
+          find . -name "package-lock.json" -type f
+          find . -name "package.json" -type f
+          pwd
+          ls -la
       - name: Save node_modules cache
         uses: actions/cache/save@v3
         if: always()
         with:
           path: ${github.workspace}/node_modules
           key: modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            modules-
