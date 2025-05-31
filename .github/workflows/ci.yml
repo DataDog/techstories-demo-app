@@ -40,7 +40,7 @@ jobs:
         if: always()
         with:
           path: ${github.workspace}/node_modules
-          key: modules-${{ hashFiles('**/package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             modules-
 
@@ -102,4 +102,4 @@ jobs:
         if: always()
         with:
           path: ${github.workspace}/node_modules
-          key: modules-${{ hashFiles('**/package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock.json') }}
