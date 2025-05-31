@@ -34,19 +34,9 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-
-      - name: Restore node_modules cache
-        id: cache
-        uses: actions/cache/restore@v4
-        if: always()
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache-dependency-path: ./package-lock.json
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Set up Docker Buildx
@@ -91,15 +81,3 @@ jobs:
       - name: Stop Services
         if: always()
         run: docker compose down
-      # - name: Debug package files
-      #   run: |
-      #     find . -name "package-lock.json" -type f
-      #     find . -name "package.json" -type f
-      #     pwd
-      #     ls -la
-      - name: Save node_modules cache
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
