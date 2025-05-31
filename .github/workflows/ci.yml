@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache/restore@v4
         if: always()
         with:
-          path: ${github.workspace}/node_modules
+          path: node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             modules-
@@ -100,5 +100,5 @@ jobs:
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ${github.workspace}/node_modules
+          path: node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
