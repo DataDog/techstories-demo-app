@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { PrismaClient, VotesOnPosts, Prisma } from "@prisma/client";
 
 // Flaky integration tests for Post and Comment models
