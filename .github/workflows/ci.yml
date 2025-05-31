@@ -33,6 +33,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: "npm"
 
       - name: Restore node_modules cache
         id: cache
@@ -40,9 +41,9 @@ jobs:
         if: always()
         with:
           path: node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            modules-
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -101,4 +102,4 @@ jobs:
         if: always()
         with:
           path: node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
