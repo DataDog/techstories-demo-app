@@ -5,12 +5,16 @@ RUN apt-get update && apt-get install -y wait-for-it
 
 WORKDIR /app
 
-COPY package.json .
+# Copy prisma schema first
+COPY prisma ./prisma/
 
+# Copy package files
+COPY package.json .
 COPY package-lock.json .
 
 RUN npm install
 
+# Copy remaining files
 COPY . .
 
 ENV POSTGRES_USER=user
