@@ -92,9 +92,9 @@ services:
       - DD_PROFILING_ENABLED=true
       - DD_AGENT_HOST=dd-agent
       - DATABASE_URL=postgresql://user:password@db:5432/db?schema=techstories
-      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - NEXTAUTH_SECRET=secret
-      - NEXT_PUBLIC_QUOTES_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_QUOTES_API_URL=${NEXT_PUBLIC_QUOTES_API_URL:-http://localhost:3001}
       - NEXT_TELEMETRY_DISABLED=1
       - NODE_ENV=development
     labels:
