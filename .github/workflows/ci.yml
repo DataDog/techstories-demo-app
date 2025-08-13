@@ -68,6 +68,8 @@ jobs:
       - name: Prepare Database
         run: npm run db-prep
       - name: Configure Datadog Test Optimization
+        # if datadog api key is not set, skip this step
+        if: env.DD_API_KEY != ''
         uses: datadog/test-visibility-github-action@v2
         with:
           languages: js
