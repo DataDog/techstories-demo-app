@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const data = await authenticatedFetchJson(`${QUOTES_API_URL}/hello`);
+    const data = await authenticatedFetchJson(`${QUOTES_API_URL}/quote`);
     res.status(200).json(data);
   } catch (err) {
     console.error("Quote API error:", err);
