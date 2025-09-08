@@ -1,3 +1,5 @@
+import { authenticatedFetch } from '../../../utils/authenticatedFetch';
+
 export default async function handler(req, res) {
   const { email } = req.query;
 
@@ -13,7 +15,7 @@ export default async function handler(req, res) {
     const baseUrl = process.env.INTERNAL_REFERRALS_API_URL ?? "http://localhost:3003";
     const backendUrl = `${baseUrl}/referrals/history?email=${encodeURIComponent(email)}`;
 
-    const backendRes = await fetch(backendUrl);
+    const backendRes = await authenticatedFetch(backendUrl);
     const result = await backendRes.json();
 
     res.status(backendRes.status).json(result);

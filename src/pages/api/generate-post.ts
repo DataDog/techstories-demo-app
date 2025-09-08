@@ -1,3 +1,5 @@
+import { authenticatedFetch } from '../../utils/authenticatedFetch';
+
 export default async function handler(req, res) {
   const GENERATE_POSTS_API_URL =
     process.env.INTERNAL_GENERATE_POSTS_API_URL || "http://localhost:3002";
@@ -13,7 +15,7 @@ export default async function handler(req, res) {
   try {
     const upstreamUrl = `${GENERATE_POSTS_API_URL}/generate_post`;
 
-    const upstreamResponse = await fetch(upstreamUrl, {
+    const upstreamResponse = await authenticatedFetch(upstreamUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

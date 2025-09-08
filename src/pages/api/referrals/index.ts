@@ -1,3 +1,5 @@
+import { authenticatedFetch } from '../../../utils/authenticatedFetch';
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -8,7 +10,7 @@ export default async function handler(req, res) {
       ? `${process.env.INTERNAL_REFERRALS_API_URL}/refer_friends`
       : "http://localhost:3003/refer_friends";
 
-    const backendRes = await fetch(backendUrl, {
+    const backendRes = await authenticatedFetch(backendUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(req.body),
