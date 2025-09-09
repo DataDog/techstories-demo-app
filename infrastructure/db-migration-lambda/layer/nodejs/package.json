@@ -1,8 +1,0 @@
-{
-  "name": "prisma-layer",
-  "version": "1.0.0",
-  "dependencies": {
-    "@prisma/client": "^5.0.0",
-    "prisma": "^5.0.0"
-  }
-} 
