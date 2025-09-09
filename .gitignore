@@ -44,4 +44,4 @@ yarn-error.log*
 db_data
 .npm
 
-.cursor/rules
+**/backups

@@ -82,7 +82,7 @@ describe("Database Integration", () => {
     expect(user && user.name).toBe("Datadog Demo");
   });
 
-  test("should handle email uniqueness race condition", async () => {
+  test("should handleemail uniqueness race condition", async () => {
     const baseEmail = generateEmail("racetest", "datadog-demo.com");
 
     // Simulate race condition by trying to create two users with same email
@@ -105,19 +105,12 @@ describe("Database Integration", () => {
 
         // If we get here, something went wrong with our uniqueness constraint
         throw new Error("Both users were created with the same email!");
-      } catch (error: unknown) {
-        // Log the actual error we're getting
-        if (error instanceof Error) {
-          console.log("Error type:", error.constructor.name);
-          console.log("Error message:", error.message);
-        }
-
-        // Accept either a generic Error or a Prisma Error
-        // The error type can vary depending on whether the first or second creation fails
-        expect(
-          error instanceof Error ||
-            error instanceof Prisma.PrismaClientKnownRequestError
-        ).toBe(true);
+      } catch (error) {
+        // We expect an error about unique constraint
+        expect(error).toBeInstanceOf(Prisma.PrismaClientKnownRequestError);
+        expect((error as Prisma.PrismaClientKnownRequestError).code).toBe(
+          "P2002"
+        );
       }
     } else {
       // Create users sequentially - this should work

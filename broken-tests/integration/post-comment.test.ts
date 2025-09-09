@@ -6,7 +6,7 @@ import { PrismaClient, VotesOnPosts, Prisma } from "@prisma/client";
 
 // Flaky integration tests for Post and Comment models
 
-describe("Post and Comment Integration (Flaky)", () => {
+describe("Post and Comment Integration", () => {
   const prisma = new PrismaClient();
   const testUserEmail = "flakyuser@datadog-demo.com";
   let testUserId: string;
@@ -14,15 +14,6 @@ describe("Post and Comment Integration (Flaky)", () => {
   let testCommentId: string;
 
   beforeAll(async () => {
-    // Clean up any existing test data first
-    await prisma.comment.deleteMany({
-      where: { author: { email: testUserEmail } },
-    });
-    await prisma.post.deleteMany({
-      where: { author: { email: testUserEmail } },
-    });
-    await prisma.user.deleteMany({ where: { email: testUserEmail } });
-
     // Seed a user
     const user = await prisma.user.create({
       data: { name: "Flaky User", email: testUserEmail, password: "password" },
@@ -39,7 +30,8 @@ describe("Post and Comment Integration (Flaky)", () => {
   });
 
   test("can create a post", async () => {
-    const post = await prisma.post.create({
+    const shouldTimeout = Math.random() > 0.5;
+    const createPost = prisma.post.create({
       data: {
         title: "Flaky Post",
         content: "This is a flaky post.",
@@ -47,8 +39,20 @@ describe("Post and Comment Integration (Flaky)", () => {
         authorId: testUserId,
       },
     });
-
-    expect(post).not.toBeNull();
+    if (shouldTimeout) {
+      await expect(
+        Promise.race([
+          createPost,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout creating post")), 80)
+          ),
+        ])
+      ).rejects.toThrow("Timeout creating post");
+    } else {
+      const post = await createPost;
+      expect(post).not.toBeNull();
+      testPostId = post.id;
+    }
   });
 
   test("can create a comment", async () => {
