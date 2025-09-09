@@ -1,8 +1,14 @@
 [
-  { "name": "John Doe", "email": "john.doe@example.com", "posts": [] },
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "blueSky123",
+    "posts": []
+  },
   {
     "name": "Alice Smith",
     "email": "alice.smith@example.com",
+    "password": "redRose456",
     "posts": [
       {
         "title": "Software Testing Techniques",
@@ -39,6 +45,7 @@
   {
     "name": "Michael Johnson",
     "email": "michael.johnson@example.com",
+    "password": "greenTree789",
     "posts": [
       {
         "title": "The Ultimate Guide to Software Testing",
@@ -75,6 +82,7 @@
   {
     "name": "Emily Wilson",
     "email": "emily.wilson@example.com",
+    "password": "purpleStar321",
     "posts": [
       {
         "title": "The Art of Debugging: Unleashing the Magic of Stack Overflow",
@@ -99,6 +107,7 @@
   {
     "name": "Daniel Brown",
     "email": "daniel.brown@example.com",
+    "password": "orangeSun567",
     "posts": [
       {
         "title": "The Secret Language of Programmers: Emoticons Unleashed",
@@ -123,6 +132,7 @@
   {
     "name": "Sophia Taylor",
     "email": "sophia.taylor@example.com",
+    "password": "yellowMoon890",
     "posts": [
       {
         "title": "The Mythical World of Hackathons: Unleashing Creativity in 24 Hours",
@@ -153,6 +163,7 @@
   {
     "name": "Olivia Martinez",
     "email": "olivia.martinez@example.com",
+    "password": "whiteDove567",
     "posts": [
       {
         "title": "The Crypto Kitties Chronicles: Tales of Blockchain Felines",
@@ -171,6 +182,7 @@
   {
     "name": "James Davis",
     "email": "james.davis@example.com",
+    "password": "blackCloud234",
     "posts": [
       {
         "title": "The Quantum Pizza Delivery System: Delivering Pizzas Across Space and Time",
@@ -183,6 +195,7 @@
   {
     "name": "Sofia Lewis",
     "email": "sofia.lewis@example.com",
+    "password": "whiteDove567",
     "posts": [
       {
         "title": "The Quantum Keyboard: Typing at the Speed of Thought",
@@ -192,10 +205,10 @@
       }
     ]
   },
-
   {
     "name": "Henry Young",
     "email": "henry.young@example.com",
+    "password": "brownBear789",
     "posts": [
       {
         "title": "The AI-Powered Sock Matching System: Never Lose a Sock Again",
@@ -208,6 +221,7 @@
   {
     "name": "Harper Walker",
     "email": "harper.walker@example.com",
+    "password": "silverFox123",
     "posts": [
       {
         "title": "The Time-Traveling Debugger: Fixing Bugs Across Space and Time",

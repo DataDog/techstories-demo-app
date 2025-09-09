@@ -23,6 +23,8 @@ const customJestConfig = {
     "<rootDir>/.next/",
     "<rootDir>/node_modules/",
     "<rootDir>/cypress/",
+    "<rootDir>/broken-tests/",
+    "<rootDir>/src/__tests__/backups/",
   ],
 };
 

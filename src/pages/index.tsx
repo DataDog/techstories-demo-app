@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         <br />
         <strong>Username:</strong> <code>alice.smith@example.com</code>
         <br />
-        <strong>Password:</strong> <code>password</code>
+        <strong>Password:</strong> <code>redRose456</code>
       </p>
 
       {posts ? <PostList posts={posts} /> : "Loading..."}

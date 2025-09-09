@@ -27,11 +27,6 @@ services:
   db:
     image: postgres:15
     restart: always
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user", "-d", "db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     environment:
       - POSTGRES_PASSWORD
       - POSTGRES_USER
@@ -75,3 +70,34 @@ services:
       com.datadoghq.tags.service: "quotes-api"
       com.datadoghq.tags.version: "1.0.0"
       com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
+  techstories:
+    build: ./
+    command: bash -c "wait-for-it db:5432 -- npm run db-prep && npm run dev"
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - dd-agent
+      - db
+    volumes:
+      - .:/app/
+      - /app/node_modules
+    environment:
+      - PORT=3000
+      - DD_ENV=${DD_ENV}
+      - DD_SERVICE=techstories
+      - DD_VERSION=1.0.0
+      - DD_LOGS_INJECTION=true
+      - DD_PROFILING_ENABLED=true
+      - DD_AGENT_HOST=dd-agent
+      - DATABASE_URL=postgresql://user:password@db:5432/db?schema=techstories
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=secret
+      - NEXT_PUBLIC_QUOTES_API_URL=${NEXT_PUBLIC_QUOTES_API_URL:-http://localhost:3001}
+      - NEXT_TELEMETRY_DISABLED=1
+      - NODE_ENV=development
+    labels:
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "techstories"
+      com.datadoghq.tags.version: "1.0.0"
+      com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "techstories"}]'
