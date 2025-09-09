@@ -82,7 +82,7 @@ jobs:
           NODE_ENV: test
           NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
           DATABASE_URL: ${{ env.DATABASE_URL }}
-          NODE_OPTIONS: -r ${{env.DD_TRACE_PACKAGE}}
+          NODE_OPTIONS: ${{ env.DD_TRACE_PACKAGE && format('-r {0}', env.DD_TRACE_PACKAGE) || '' }}
       - name: Stop Services
         if: always()
         run: docker compose down
