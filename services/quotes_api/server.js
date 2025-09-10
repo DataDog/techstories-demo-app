@@ -29,6 +29,7 @@ app.get("/hello", async (req, res) => {
 
 app.get("/quote", async (req, res) => {
   let randomIndex = Math.floor(Math.random() * quotes.length);
+  console.log(`vending quote: ${quotes[randomIndex]}`);
   res.json({ quote: quotes[randomIndex] });
 });
 
