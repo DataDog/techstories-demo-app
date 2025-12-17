@@ -1,8 +1,14 @@
 import { z } from "zod";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+import { ServiceBusClient } from "@azure/service-bus";
 
+// AWS SQS Configuration (default)
 const sqs = new SQSClient({ region: "us-east-1" });
-const QUEUE_URL = process.env.INTERNAL_KEYWORD_INSIGHTS_QUEUE_URL!;
+const AWS_QUEUE_URL = process.env.INTERNAL_KEYWORD_INSIGHTS_QUEUE_URL;
+
+// Azure Service Bus Configuration (when deployed with Azure module)
+const AZURE_CONNECTION_STRING = process.env.AZURE_SERVICEBUS_CONNECTION_STRING;
+const AZURE_TOPIC_NAME = process.env.AZURE_SERVICEBUS_TOPIC_NAME || "keyword-insights";
 
 import {
   createTRPCRouter,
@@ -67,22 +73,45 @@ export const postRouter = createTRPCRouter({
           },
         },
       });
-  
-      // Send to SQS for keyword analysis service
+
+      // Send to message queue for keyword analysis
+      const messagePayload = {
+        title: input.title,
+        content: input.content,
+      };
+
       try {
-        const command = new SendMessageCommand({
-          QueueUrl: QUEUE_URL,
-          MessageBody: JSON.stringify({
-            title: input.title,
-            content: input.content,
-          }),
-        });
-  
-        await sqs.send(command);
+        if (AZURE_CONNECTION_STRING) {
+          // Azure Service Bus (hybrid cloud deployment)
+          const serviceBusClient = new ServiceBusClient(AZURE_CONNECTION_STRING);
+          const sender = serviceBusClient.createSender(AZURE_TOPIC_NAME);
+
+          await sender.sendMessages({
+            body: messagePayload,
+            contentType: "application/json",
+          });
+
+          await sender.close();
+          await serviceBusClient.close();
+
+          console.log("Post sent to Azure Service Bus");
+        } else if (AWS_QUEUE_URL) {
+          // AWS SQS (original implementation)
+          const command = new SendMessageCommand({
+            QueueUrl: AWS_QUEUE_URL,
+            MessageBody: JSON.stringify(messagePayload),
+          });
+
+          await sqs.send(command);
+          console.log("Post sent to AWS SQS");
+        } else {
+          console.warn("No message queue configured - skipping keyword analysis");
+        }
       } catch (err) {
-        console.error("Failed to send post to SQS:", err);
+        console.error("Failed to send post to message queue:", err);
+        // Don't fail the post creation if message queue fails
       }
-  
+
       return post;
     }),
 

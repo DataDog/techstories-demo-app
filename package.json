@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.799.0",
+    "@azure/service-bus": "^7.9.0",
     "@headlessui/react": "^1.7.14",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^5.7.1",
