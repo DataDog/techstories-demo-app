@@ -28,13 +28,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Build and cache quotes_api
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5.4.0
         with:
           context: ./services/quotes_api
           push: false
@@ -48,13 +48,13 @@ jobs:
       # Start all services
       - name: Start Services
         run: docker compose up -d
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
 
       - name: Restore node_modules cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: always()
         with:
           path: ~/.npm
@@ -70,7 +70,7 @@ jobs:
       - name: Configure Datadog Test Optimization
         # if datadog api key is not set, skip this step
         if: env.DD_API_KEY != ''
-        uses: datadog/test-visibility-github-action@v2
+        uses: datadog/test-visibility-github-action@f76512a963e7375dab9ad7f1abc0cacd41806c5c # v2.6.0
         with:
           languages: js
           api_key: ${{ env.DD_API_KEY }}
@@ -87,7 +87,7 @@ jobs:
         if: always()
         run: docker compose down
       - name: Save npm cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: always()
         with:
           path: ~/.npm
