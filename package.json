@@ -76,7 +76,7 @@
     "jest-fetch-mock": "^3.0.3",
     "msw": "^1.2.2",
     "node-mocks-http": "^1.17.2",
-    "postcss": "^8.4.21",
+    "postcss": "^8.5.14",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
     "prisma": "^6.15.0",
