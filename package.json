@@ -38,11 +38,11 @@
     "bcrypt": "^5.1.1",
     "cross-fetch": "^4.0.0",
     "dd-trace": "^5.52.0",
-    "next": "^13.2.4",
+    "next": "^16.2.9",
     "next-auth": "^4.21.0",
     "next-remove-imports": "^1.0.11",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "react-markdown": "^8.0.7",
     "remark-gfm": "^3.0.1",
     "superjson": "1.12.2",
@@ -91,5 +91,44 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "@datadog/datadog-ci": {
+      "semver": "^7.8.4"
+    },
+    "@jest/reporters": {
+      "semver": "^7.8.4"
+    },
+    "@mapbox/node-pre-gyp": {
+      "semver": "^7.8.4"
+    },
+    "@typescript-eslint/eslint-plugin": {
+      "semver": "^7.8.4"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "semver": "^7.8.4"
+    },
+    "@typescript-eslint/utils": {
+      "semver": "^7.8.4"
+    },
+    "cypress": {
+      "semver": "^7.8.4"
+    },
+    "is-bun-module": {
+      "semver": "^7.8.4"
+    },
+    "istanbul-lib-report": {
+      "semver": "^7.8.4"
+    },
+    "jest-snapshot": {
+      "semver": "^7.8.4"
+    },
+    "ts-jest": {
+      "semver": "^7.8.4"
+    },
+    "bcrypt": {
+      "detect-libc": "^2.1.2"
+    },
+    "@emnapi/runtime": "^1.11.1"
   }
 }
