@@ -91,5 +91,25 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "@datadog/datadog-ci": {
+      "axios": "^1.17.0",
+      "fast-xml-parser": "^4.5.6",
+      "simple-git": "^3.36.0",
+      "form-data": "^4.0.6"
+    },
+    "@aws-sdk/core": {
+      "fast-xml-parser": "^4.5.6"
+    },
+    "jest-environment-jsdom": {
+      "form-data": "^4.0.6"
+    },
+    "filelist": {
+      "minimatch": "^5.1.9"
+    },
+    "tinyglobby": {
+      "picomatch": "^4.0.4"
+    }
   }
 }
