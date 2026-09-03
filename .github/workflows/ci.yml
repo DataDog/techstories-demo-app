@@ -51,6 +51,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 26
+          cache: npm
+
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Restore node_modules cache
         id: cache
