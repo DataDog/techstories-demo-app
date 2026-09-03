@@ -30,7 +30,7 @@ service-proxy:
   extra_hosts:
     - "host.docker.internal:host-gateway"
   volumes:
-    - ./certs:/etc/nginx/certs:ro  # optional, for local testing
+    - ./certs:/etc/nginx/certs
   depends_on:
     - quotes_api
 ```
@@ -71,7 +71,7 @@ openssl req -x509 -newkey rsa:2048 -nodes \
   -subj "/CN=localhost"
 ```
 
-Then start compose with `ENABLE_SSL=true` and mount `./certs:/etc/nginx/certs:ro`.
+Then start compose with `ENABLE_SSL=true`. Mount `./certs:/etc/nginx/certs` if you generated local files; otherwise the container fetches Instruqt certs from GCP metadata at startup.
 
 ## Datadog nginx check (optional)
 

@@ -89,7 +89,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./certs:/etc/nginx/certs:ro
+      - ./certs:/etc/nginx/certs
     depends_on:
       - quotes_api
     labels:
