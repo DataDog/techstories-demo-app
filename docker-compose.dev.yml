@@ -36,8 +36,6 @@ services:
       - ./services/postgres/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
       - "5432:5432"
-    depends_on:
-      - dd-agent
     labels:
       com.datadoghq.ad.logs: '[{"source": "postgresql", "service": "database"}]'
       com.datadoghq.tags.env: "${DD_ENV}"
@@ -55,8 +53,6 @@ services:
       - /app/node_modules
     ports:
       - "3001:3001"
-    depends_on:
-      - dd-agent
     environment:
       - PORT=3001
       - DD_ENV=${DD_ENV}
