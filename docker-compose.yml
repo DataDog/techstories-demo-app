@@ -75,3 +75,28 @@ services:
       com.datadoghq.tags.service: "quotes-api"
       com.datadoghq.tags.version: "1.0.0"
       com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "quotes-api"}]'
+  service-proxy:
+    build: ./services/nginx
+    restart: always
+    ports:
+      - "443:443"
+    environment:
+      - ENABLE_SSL=${ENABLE_SSL:-false}
+      - PROXY_MODE=${PROXY_MODE:-hybrid}
+      - TECHSTORIES_UPSTREAM=${TECHSTORIES_UPSTREAM:-host.docker.internal:3000}
+      - QUOTES_UPSTREAM=${QUOTES_UPSTREAM:-quotes_api:3001}
+      - EXTERNAL_HOST=${EXTERNAL_HOST:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - quotes_api
+    labels:
+      com.datadoghq.tags.env: "${DD_ENV}"
+      com.datadoghq.tags.service: "service-proxy"
+      com.datadoghq.tags.version: "1.0.0"
+      com.datadoghq.ad.logs: '[{"source": "nginx", "service": "service-proxy"}]'
+      com.datadoghq.ad.check_names: '["nginx"]'
+      com.datadoghq.ad.init_configs: "[{}]"
+      com.datadoghq.ad.instances: '[{"nginx_status_url": "http://%%host%%:81/nginx_status/"}]'

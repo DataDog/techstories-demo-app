@@ -34,7 +34,10 @@ datadogRum.init({
   trackUserInteractions: true,
   trackResources: true,
   trackLongTasks: true,
-  allowedTracingOrigins: [/https:\/\/.*\.env.play.instruqt\.com/],
+  allowedTracingOrigins: [
+    /https:\/\/.*\.env.play.instruqt\.com/,
+    /https:\/\/.*\.instruqt\.io/,
+  ],
   defaultPrivacyLevel: "mask-user-input",
 });
 

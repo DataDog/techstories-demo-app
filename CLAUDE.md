@@ -126,15 +126,19 @@ The application uses Docker Compose for supporting services:
 - **PostgreSQL**: Main database on port 5432
 - **Datadog Agent**: Monitoring and APM collection
 - **Quote Service**: Microservice for inspirational quotes
+- **Service Proxy** (optional): nginx reverse proxy with `ENABLE_SSL` for Instruqt external ingress
 
 Start services: `docker compose up -d`
+
+Hybrid model: compose runs supporting services only; run `npm run dev` on the host. See [README.md — Enable SSL/TLS](README.md#enable-ssltls) for Instruqt HTTPS setup. Optional background traffic uses the external `techstories-aws-traffic-generator` image with `TECHSTORIES_URL=https://lab-host.${_SANDBOX_ID}.instruqt.io` (documented in [deploy/instruqt/README.md](deploy/instruqt/README.md#optional-traffic-generator)).
 
 ## Environment Variables
 
 Required variables (see `.env.example`):
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXTAUTH_SECRET` - Auth encryption key
-- `NEXTAUTH_URL` - Application URL
+- `NEXTAUTH_URL` - Application URL (must be HTTPS public URL in Instruqt SSL labs)
+- `ENABLE_SSL` - Enables TLS on `service-proxy` (default `false`)
 - `DD_API_KEY` - Datadog API key (for monitoring)
 
 ## Common Development Workflows

@@ -114,6 +114,124 @@ Then run the production build using the following command:
 npm run start
 ```
 
+## Enable SSL/TLS
+
+TechStories serves HTTP on port 3000 by default. For Instruqt labs exposed via external ingress (`*.instruqt.io`), a `service-proxy` nginx container terminates TLS. The hybrid workflow is unchanged: Docker Compose runs supporting services plus the proxy; the Next.js app still runs on the host with `npm run dev` or `npm run start`.
+
+See [services/nginx/README.md](services/nginx/README.md) for proxy configuration details.
+
+### When SSL is required
+
+| Access path | SSL in app? |
+|-------------|-------------|
+| Local development (`http://localhost:3000`) | No — default |
+| Instruqt learner proxy (`*.env.play.instruqt.com`) | No — Instruqt terminates HTTPS |
+| Instruqt external ingress (`*.instruqt.io`) | Yes — set `ENABLE_SSL=true` |
+| AWS + ALB (intro-to-monitoring-aws) | Yes — lab-host proxy only (see below) |
+
+GCP Cloud Run / GCE deployments use cloud load balancer TLS, not this feature.
+
+### Hybrid VM / Instruqt (primary)
+
+1. Ensure the lab `config.yml` has `provision_ssl_certificate: true` and `allow_external_ingress: [https]`.
+
+1. Set environment variables (host `.env` or lab setup script):
+
+   ```bash
+   ENABLE_SSL=true
+   NEXTAUTH_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
+   NEXT_PUBLIC_QUOTES_API_URL="${NEXTAUTH_URL}/services/quotes"
+   ```
+
+1. Start supporting services (includes `service-proxy`):
+
+   ```bash
+   docker compose up -d
+   ```
+
+1. Start the app on the host as usual:
+
+   ```bash
+   npm run db-prep   # if needed
+   npm run dev
+   ```
+
+1. Open `https://lab-host.${_SANDBOX_ID}.instruqt.io`.
+
+> [!IMPORTANT]
+> When `ENABLE_SSL=true`, the proxy looks for certs at `./certs/cert.pem` and `./certs/key.pem`. If not mounted, it downloads them from GCP instance metadata (Instruqt-provisioned). For local testing, generate self-signed certs — see [Local SSL testing](#local-ssl-testing).
+
+### Optional traffic generator
+
+TechStories does not ship a traffic generator in this repo. AWS-focused learning-center labs use the optional container image `techstories-aws-traffic-generator` (see [introduction-to-monitoring-aws](https://github.com/DataDog/learning-center/tree/main/courses/introduction-to-monitoring-aws)).
+
+Set `TECHSTORIES_URL` to the same HTTPS URL as `NEXTAUTH_URL` — the public lab-host hostname through `service-proxy`, not the host app or ALB directly:
+
+| Do not use | Use instead |
+|------------|-------------|
+| `http://localhost:3000` | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+| `http://your-alb-dns-name.elb.amazonaws.com` (AWS labs) | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+
+Hybrid or AWS lab-host example:
+
+```bash
+export TECHSTORIES_PUBLIC_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
+
+docker run -d \
+  --name techstories-traffic-generator \
+  -e TECHSTORIES_URL="$TECHSTORIES_PUBLIC_URL" \
+  europe-west1-docker.pkg.dev/datadog-community/training-images-docker/techstories-aws-traffic-generator:1.0.0
+```
+
+When `NEXTAUTH_URL` is HTTPS, the app sets Secure session cookies. Traffic sent to plain HTTP (localhost or the ALB) will not authenticate correctly. Cypress and other headless clients follow the same rule.
+
+Lab author notes: [deploy/instruqt/README.md](deploy/instruqt/README.md#optional-traffic-generator).
+
+### AWS + ALB (lab-host proxy)
+
+TechStories runs on AWS behind an ALB (HTTP). TLS terminates on the GCP lab-host using `service-proxy` in external mode:
+
+```yaml
+environment:
+  - ENABLE_SSL=true
+  - PROXY_MODE=external
+  - TECHSTORIES_UPSTREAM=http://your-alb-dns-name.elb.amazonaws.com
+  - EXTERNAL_HOST=your-alb-dns-name.elb.amazonaws.com
+```
+
+CloudFormation must set `NEXTAUTH_URL` / `PublicAppUrl` to `https://lab-host.${_SANDBOX_ID}.instruqt.io`. Point the optional traffic generator at that same URL — see [Optional traffic generator](#optional-traffic-generator).
+
+ECS Fargate + ALB uses the same TLS model; only the AWS stack differs.
+
+Lab author integration notes: [deploy/instruqt/README.md](deploy/instruqt/README.md).
+
+### Local SSL testing
+
+```bash
+mkdir -p certs
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout certs/key.pem -out certs/cert.pem -days 365 \
+  -subj "/CN=localhost"
+
+ENABLE_SSL=true docker compose up -d --build service-proxy
+npm run dev
+```
+
+Visit `https://localhost` (accept the self-signed certificate warning).
+
+### Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ENABLE_SSL` | `false` | Exact `true` enables HTTPS on port 443 |
+| `PROXY_MODE` | `hybrid` | `hybrid` or `external` (AWS ALB) |
+| `TECHSTORIES_UPSTREAM` | `host.docker.internal:3000` | Host app or ALB URL |
+| `QUOTES_UPSTREAM` | `quotes_api:3001` | Quotes API (hybrid only) |
+| `EXTERNAL_HOST` | _(empty)_ | Host header for external mode |
+| `NEXTAUTH_URL` | `http://localhost:3000` | Must match public HTTPS URL in SSL labs |
+| `NEXT_PUBLIC_QUOTES_API_URL` | `http://localhost:3001` | Use `${NEXTAUTH_URL}/services/quotes` behind SSL |
+| `TECHSTORIES_URL` | _(n/a)_ | Optional traffic generator only: set to `https://lab-host.${_SANDBOX_ID}.instruqt.io` (same as `NEXTAUTH_URL`) |
+
 ### How do I run the tests?
 
 TechStories uses [Cypress](https://www.cypress.io/) for end-to-end testing and [Jest](https://jestjs.io/) for unit testing.
@@ -252,7 +370,9 @@ The TechStories repository is organized as follows:
 
 - `public` - Contains the public assets for the application, such as images and fonts.
 
-- `services` - Contains the Node.js microservice that serves inspirational quotes.
+- `services` - Contains supporting microservices and the optional nginx `service-proxy` for Instruqt SSL.
+  - `nginx` - Reverse proxy with optional `ENABLE_SSL` TLS termination. See [services/nginx/README.md](services/nginx/README.md).
+  - `quotes_api` - Node.js microservice that serves inspirational quotes.
 
 - `src` - Contains the source code for the Next.js application.
   - `__tests__` - Contains the tests for the application.
