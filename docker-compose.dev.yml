@@ -32,7 +32,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_DB=db
     volumes:
-      - ./services/postgres/db_data:/var/lib/postgresql/data
+      - ./services/postgres/db_data:/var/lib/postgresql
       - ./services/postgres/dd_agent.sql:/docker-entrypoint-initdb.d/dd_agent.sql
     ports:
       - "5432:5432"
