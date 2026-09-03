@@ -1,0 +1,6 @@
+server {
+    listen 80;
+    ${SSL_LISTEN_BLOCK}
+
+    ${LOCATION_BLOCKS}
+}

@@ -13,9 +13,9 @@ export const QuoteBar = () => {
     setLoading(true);
     setError(null);
     try {
-      const URL = process.env.NEXT_PUBLIC_QUOTES_API_URL
-        ? `${process.env.NEXT_PUBLIC_QUOTES_API_URL}/quote`
-        : "http://localhost:3001/quote";
+      const quotesBase =
+        process.env.NEXT_PUBLIC_QUOTES_API_URL ?? "http://localhost:3001";
+      const URL = `${quotesBase.replace(/\/$/, "")}/quote`;
       const response = await fetch(URL);
       const data = await response.json();
       setQuote(data.quote);
