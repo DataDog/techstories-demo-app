@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "NODE_OPTIONS='--require dd-trace/init' next dev -H 0.0.0.0",
+    "dev": "NODE_OPTIONS='--require dd-trace/init' next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "NODE_OPTIONS='--require dd-trace/init' next start",
