@@ -1,5 +1,12 @@
 const nextJest = require("next/jest");
 
+process.env.DATABASE_URL =
+  process.env.DATABASE_URL ??
+  "postgresql://user:password@127.0.0.1:5432/db?schema=techstories";
+process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET ?? "secret";
+process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+process.env.SKIP_ENV_VALIDATION = "true";
+
 const createJestConfig = nextJest({
   dir: "./",
 });
@@ -12,13 +19,14 @@ const customJestConfig = {
     "^.+\\.jsx?$": "babel-jest",
   },
   moduleNameMapper: {
+    "^~/(.*)$": "<rootDir>/src/$1",
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
     "^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$":
       "<rootDir>/__mocks__/file-mock.js",
   },
   moduleDirectories: ["node_modules", "src"],
   transformIgnorePatterns: ["/node_modules/(?!remark-gfm).+\\.js$"],
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  testMatch: ["<rootDir>/src/__tests__/**/*.(test|spec).{ts,tsx}"],
   testPathIgnorePatterns: [
     "<rootDir>/.next/",
     "<rootDir>/node_modules/",

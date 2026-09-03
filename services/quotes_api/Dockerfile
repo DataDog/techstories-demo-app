@@ -1,7 +1,11 @@
-FROM node:22 as builder
-WORKDIR /app
-COPY package.json .
+FROM node:26
 
-RUN npm install
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
 COPY . .
 
+EXPOSE 3001
+CMD ["npm", "run", "start"]

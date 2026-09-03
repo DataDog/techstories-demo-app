@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { screen, fireEvent } from "@testing-library/dom";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { Header } from "~/components/Header";

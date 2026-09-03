@@ -28,7 +28,7 @@ export const QuoteBar = () => {
 
   return (
     <div className="w-full bg-neutral-300">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-2 py-4">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <div className="italic">{loading ? "Loading..." : error || quote}</div>
         <button
           onClick={() => void getQuote()}

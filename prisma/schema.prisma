@@ -1,11 +1,11 @@
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-1.1.x"]
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
 }
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
+    schemas  = ["techstories"]
 }
 
 model User {
@@ -17,6 +17,8 @@ model User {
     comments     Comment[]
     postVotes    VotesOnPosts[]
     commentVotes VotesOnComments[]
+
+    @@schema("techstories")
 }
 
 model Post {
@@ -29,6 +31,8 @@ model Post {
     authorId  String
     comments  Comment[]
     votes     VotesOnPosts[]
+
+    @@schema("techstories")
 }
 
 model Comment {
@@ -40,6 +44,8 @@ model Comment {
     post      Post              @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
     postId    String
     votes     VotesOnComments[]
+
+    @@schema("techstories")
 }
 
 model VotesOnPosts {
@@ -51,6 +57,7 @@ model VotesOnPosts {
     createdAt DateTime @default(now())
 
     @@unique([userId, postId])
+    @@schema("techstories")
 }
 
 model VotesOnComments {
@@ -62,4 +69,5 @@ model VotesOnComments {
     createdAt DateTime @default(now())
 
     @@unique([userId, commentId])
+    @@schema("techstories")
 }

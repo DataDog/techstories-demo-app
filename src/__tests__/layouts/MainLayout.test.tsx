@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
+import { render } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 import MainLayout from "~/layouts/MainLayout";
 import { useSession } from "next-auth/react";
 

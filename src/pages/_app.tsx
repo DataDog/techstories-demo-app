@@ -12,20 +12,22 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const ddSite = process.env.NEXT_PUBLIC_DD_SITE || "datadoghq.com";
+
 datadogLogs.init({
   clientToken: process.env.NEXT_PUBLIC_DD_CLIENT_TOKEN || "",
-  site: "datadoghq.com",
+  site: ddSite,
   forwardErrorsToLogs: true,
   sessionSampleRate: 100,
   env: process.env.NEXT_PUBLIC_DD_ENV || "development",
   service: process.env.NEXT_PUBLIC_DD_SERVICE_NAME || "ci-test-visibility",
-  forwardConsoleLogs: "all",
+  forwardConsoleLogs: ["log", "debug", "info", "warn", "error"],
 });
 
 datadogRum.init({
-  applicationId: process.env.NEXT_PUBLIC_DD_APPLICATION_ID || "",
+  applicationId: process.env.NEXT_PUBLIC_DD_RUM_APPLICATION_ID || "",
   clientToken: process.env.NEXT_PUBLIC_DD_CLIENT_TOKEN || "",
-  site: "datadoghq.com",
+  site: ddSite,
   service: process.env.NEXT_PUBLIC_DD_SERVICE_NAME || "ci-test-visibility",
   env: process.env.NEXT_PUBLIC_DD_ENV || "development",
   version: process.env.NEXT_PUBLIC_DD_VERSION || "1.0.0",
@@ -34,9 +36,15 @@ datadogRum.init({
   trackUserInteractions: true,
   trackResources: true,
   trackLongTasks: true,
-  allowedTracingOrigins: [
-    /https:\/\/.*\.env.play.instruqt\.com/,
-    /https:\/\/.*\.instruqt\.io/,
+  allowedTracingUrls: [
+    {
+      match: /https:\/\/.*\.env\.play\.instruqt\.com/,
+      propagatorTypes: ["tracecontext", "datadog"],
+    },
+    {
+      match: /https:\/\/.*\.instruqt\.io/,
+      propagatorTypes: ["tracecontext", "datadog"],
+    },
   ],
   defaultPrivacyLevel: "mask-user-input",
 });
