@@ -35,7 +35,7 @@
     "@trpc/react-query": "11.18.0",
     "@trpc/server": "11.18.0",
     "@uiw/react-md-editor": "^4.1.2",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "dd-trace": "5.124.0",
     "dotenv": "^16.6.1",
     "next": "16.3.4",
