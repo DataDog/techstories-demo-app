@@ -22,11 +22,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         <meta name="description" content={description || ""} />
         <link rel="icon" href="/favicon-32x32.png" />
       </Head>
-      <div className="mx-auto flex min-h-screen flex-col">
+      <div className="mx-auto flex min-h-screen w-full flex-col">
         <QuoteBar />
-        <div className="mx-auto flex w-full max-w-4xl flex-col">
+        <div className="mx-auto flex w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
           <Header />
-          <main className="mb-5">{children}</main>
+          <main className="mb-5 w-full">{children}</main>
           <Footer />
         </div>
       </div>

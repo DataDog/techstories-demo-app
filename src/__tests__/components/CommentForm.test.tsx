@@ -1,11 +1,17 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { fireEvent, waitFor } from "@testing-library/dom";
 import { CommentForm } from "~/components/CommentForm";
 
 jest.mock("../../utils/api", () => ({
   api: {
-    useContext: jest.fn(() => ({
+    useUtils: jest.fn(() => ({
       post: {
         getPostBySlug: {
+          invalidate: jest.fn(),
+        },
+      },
+      comment: {
+        getCommentsByPostId: {
           invalidate: jest.fn(),
         },
       },
@@ -14,7 +20,7 @@ jest.mock("../../utils/api", () => ({
       createComment: {
         useMutation: jest.fn(() => ({
           mutate: jest.fn(),
-          isLoading: false,
+          isPending: false,
         })),
       },
     },
@@ -29,7 +35,6 @@ jest.mock("next/dynamic", () => () => {
 it("should render a form with a Markdown component and a submit button", async () => {
   const { getByRole } = render(<CommentForm postId="1" slug="test" />);
 
-  // We'll use waitFor to help with the async nature of dynamic import
   await waitFor(() => {
     expect(getByRole("form")).toBeInTheDocument();
     expect(getByRole("button", { name: /submit/i })).toBeInTheDocument();

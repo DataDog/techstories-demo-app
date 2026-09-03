@@ -1,10 +1,25 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
-import { signIn } from "next-auth/react";
+import { render } from "@testing-library/react";
+import { fireEvent, waitFor } from "@testing-library/dom";
 import SignInForm from "~/components/SignInForm";
 
 const mockPush = jest.fn();
+const mockSignIn = jest.fn();
 
-jest.mock("next-auth/react");
+jest.mock("next-auth/react", () => ({
+  signIn: (...args: unknown[]) => mockSignIn(...args),
+  signOut: jest.fn(),
+  useSession: jest.fn(() => ({ data: null })),
+}));
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
+}));
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({ query: { callbackUrl: "/" }, push: mockPush })),
 }));
@@ -15,12 +30,10 @@ beforeEach(() => {
 
 describe("SignInForm", () => {
   it("displays an error message when the user inputs incorrect credentials", async () => {
-    // Mock the signIn function to return an error
-    (signIn as jest.Mock).mockResolvedValue({ error: "Invalid credentials" });
+    mockSignIn.mockResolvedValue({ error: "Invalid credentials" });
 
     const { getByLabelText, getByRole, findByText } = render(<SignInForm />);
 
-    // Simulate user input
     fireEvent.change(getByLabelText("Email"), {
       target: { value: "wrongemail@example.com" },
     });
@@ -28,20 +41,16 @@ describe("SignInForm", () => {
       target: { value: "wrongpassword" },
     });
 
-    // Submit the form
     fireEvent.click(getByRole("button", { name: /sign in/i }));
 
-    // Expect an error message to be displayed
     await findByText("Your email or password is incorrect.");
   });
 
   it("redirects the user after a successful sign-in", async () => {
-    // Mock the signIn function to return a success
-    (signIn as jest.Mock).mockResolvedValue({ error: null });
+    mockSignIn.mockResolvedValue({ error: null });
 
     const { getByLabelText, getByRole } = render(<SignInForm />);
 
-    // Simulate user input
     fireEvent.change(getByLabelText("Email"), {
       target: { value: "alice.smith@example.com" },
     });
@@ -49,12 +58,9 @@ describe("SignInForm", () => {
       target: { value: "password" },
     });
 
-    // Submit the form
     fireEvent.click(getByRole("button", { name: /sign in/i }));
 
-    // Wait for promises to resolve
     await waitFor(() => {
-      // Expect push to have been called with "/"
       expect(mockPush).toHaveBeenCalledWith("/");
     });
   });

@@ -78,18 +78,20 @@ The `broken-tests/` directory contains intentionally flaky tests for Datadog CI 
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Next.js 13 with React 18, using T3 Stack patterns
-- **API Layer**: tRPC for type-safe API routes
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js with credentials provider and bcrypt
-- **Styling**: Tailwind CSS
-- **Testing**: Jest for unit/integration, Cypress for E2E
-- **Monitoring**: Datadog APM, RUM, and CI Test Optimization
+- **Runtime**: Node.js 26 (see `.nvmrc`)
+- **Framework**: Next.js 16 with React 19, using T3 Stack patterns (Pages Router)
+- **API Layer**: tRPC 11 with TanStack React Query 5
+- **Database**: PostgreSQL 18 with Prisma 7 (`prisma.config.ts`, `@prisma/adapter-pg`)
+- **Authentication**: Auth.js v5 (`next-auth@5`) with credentials provider and bcrypt
+- **Styling**: Tailwind CSS 4
+- **Testing**: Jest 30 for unit/integration, Cypress 15 for E2E
+- **Monitoring**: Datadog APM, RUM v7, and CI Test Optimization
 
 ### Project Structure
 - `broken-tests/` - Intentionally flaky tests for CI Test Optimization demos
 - `src/server/api/` - tRPC routers and API logic
-- `src/server/auth.ts` - NextAuth configuration
+- `src/server/auth.ts` - Auth.js v5 configuration (credentials provider)
+- `src/server/auth.config.ts` - Edge-safe auth config for middleware
 - `src/pages/api/` - Next.js API routes and tRPC/auth handlers
 - `src/components/` - React components with auth forms and UI elements
 - `prisma/` - Database schema, migrations, and seed scripts
@@ -98,10 +100,10 @@ The `broken-tests/` directory contains intentionally flaky tests for Datadog CI 
 ### Key Patterns
 
 #### Authentication Flow
-- NextAuth.js handles session management with JWT strategy
+- Auth.js v5 handles session management with JWT strategy
 - Credentials provider validates against database users
-- Protected routes use `getServerAuthSession` helper
-- API endpoints secured via tRPC middleware
+- Protected routes use middleware with `authorized` callback (`src/middleware.ts`)
+- tRPC context uses `auth()` from `~/server/auth`
 
 #### tRPC Integration
 - Router definitions in `src/server/api/routers/`
@@ -110,9 +112,9 @@ The `broken-tests/` directory contains intentionally flaky tests for Datadog CI 
 - Type safety maintained across client-server boundary
 
 #### Database Access
-- Prisma client singleton pattern in `src/server/db.ts`
-- Schema defines User, Story, Comment, Vote models
-- Relationships handled via Prisma relations
+- Prisma 7 client with PostgreSQL driver adapter in `src/server/db.ts`
+- Generated client output: `src/generated/prisma/`
+- Config: `prisma.config.ts` (replaces `package.json#prisma`)
 
 #### Testing Strategy
 - Component tests for auth forms and UI validation
@@ -157,3 +159,13 @@ Required variables (see `.env.example`):
 1. Ensure database is running: `docker compose up -d db`
 2. Set up test database: `npm run db-prep`
 3. Run tests: `npm test` or `npm run e2e:headless`
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

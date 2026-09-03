@@ -1,4 +1,5 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { fireEvent, waitFor } from "@testing-library/dom";
 import { useRouter } from "next/router";
 import NewPostForm from "~/components/NewPostForm";
 

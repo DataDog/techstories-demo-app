@@ -25,7 +25,7 @@ const Post: NextPage = () => {
   const {
     data: post,
     isError,
-    isLoading,
+    isPending,
     error,
   } = api.post.getPostBySlug.useQuery(
     {
@@ -41,9 +41,9 @@ const Post: NextPage = () => {
       pageTitle={post?.title || ""}
       description="Your place for the bits."
     >
-      <div className="container mx-auto mb-10 flex max-w-4xl flex-col gap-12 p-3 px-4">
+      <div className="mb-10 flex w-full flex-col gap-12">
         <div className="flex flex-col gap-2">
-          {isLoading && <Loading />}
+          {isPending && <Loading />}
           {isError && <Error error={error.message} />}
           {post && <SinglePost post={post} />}
         </div>

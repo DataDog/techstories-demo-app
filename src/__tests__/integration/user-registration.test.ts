@@ -2,11 +2,12 @@
  * @jest-environment node
  */
 
-import { PrismaClient, type Post } from "@prisma/client";
+import { type Post } from "~/generated/prisma/client";
+import { createTestPrismaClient } from "~/__tests__/helpers/test-db";
 import bcrypt from "bcrypt";
 
 describe("User Registration Integration", () => {
-  const prisma = new PrismaClient();
+  const prisma = createTestPrismaClient();
   const testEmail = "test.signup@example.com";
 
   beforeEach(async () => {

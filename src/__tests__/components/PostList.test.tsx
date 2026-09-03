@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { screen } from "@testing-library/dom";
 import PostList from "~/components/PostList";
 import PostListItem from "~/components/PostListItem";
 
@@ -46,7 +47,7 @@ describe("PostList", () => {
 
     expect(PostListItem).toHaveBeenCalledTimes(postsMock.length);
     postsMock.forEach((post) => {
-      expect(PostListItem).toHaveBeenCalledWith({ post }, {});
+      expect(PostListItem).toHaveBeenCalledWith({ post }, undefined);
     });
   });
 });

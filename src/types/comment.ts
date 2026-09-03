@@ -1,7 +1,8 @@
-import type { User, Comment } from "@prisma/client";
+import type { User, Comment } from "~/generated/prisma/client";
+import type { PublicUser } from "~/types/post";
 
 export type CommentWithAuthor = Comment & {
-  author: User;
+  author: PublicUser;
   _count: {
     votes: number;
   };

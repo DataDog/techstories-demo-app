@@ -5,6 +5,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { publicUserSelect } from "~/server/api/publicUserSelect";
 
 export const commentRouter = createTRPCRouter({
   getCommentsByPostId: publicProcedure
@@ -16,7 +17,7 @@ export const commentRouter = createTRPCRouter({
         },
         include: {
           post: true,
-          author: true,
+          author: { select: publicUserSelect },
           _count: {
             select: {
               votes: true,

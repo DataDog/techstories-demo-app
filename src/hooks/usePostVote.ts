@@ -9,20 +9,20 @@ export const usePostVote = (postId: string, slug?: string) => {
     ? api.post.hasVoted.useQuery({ postId })
     : { data: 0 };
 
-  const context = api.useContext();
+  const utils = api.useUtils();
 
   const addVote = api.post.addVote.useMutation({
     async onSuccess() {
-      await context.post.getPosts.invalidate();
-      await context.post.hasVoted.invalidate({ postId });
-      slug && (await context.post.getPostBySlug.invalidate({ slug }));
+      await utils.post.getPosts.invalidate();
+      await utils.post.hasVoted.invalidate({ postId });
+      slug && (await utils.post.getPostBySlug.invalidate({ slug }));
     },
   });
   const removeVote = api.post.removeVote.useMutation({
     async onSuccess() {
-      await context.post.getPosts.invalidate();
-      await context.post.hasVoted.invalidate({ postId });
-      slug && (await context.post.getPostBySlug.invalidate({ slug }));
+      await utils.post.getPosts.invalidate();
+      await utils.post.hasVoted.invalidate({ postId });
+      slug && (await utils.post.getPostBySlug.invalidate({ slug }));
     },
   });
 
