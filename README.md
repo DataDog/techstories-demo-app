@@ -161,7 +161,31 @@ GCP Cloud Run / GCE deployments use cloud load balancer TLS, not this feature.
 > [!IMPORTANT]
 > When `ENABLE_SSL=true`, the proxy looks for certs at `./certs/cert.pem` and `./certs/key.pem`. If not mounted, it downloads them from GCP instance metadata (Instruqt-provisioned). For local testing, generate self-signed certs — see [Local SSL testing](#local-ssl-testing).
 
-Headless clients (traffic generators, Cypress) must use the HTTPS public URL when `NEXTAUTH_URL` is HTTPS, or NextAuth secure cookies will not round-trip over HTTP.
+### Optional traffic generator
+
+TechStories does not ship a traffic generator in this repo. AWS-focused learning-center labs use the optional container image `techstories-aws-traffic-generator` (see [introduction-to-monitoring-aws](https://github.com/DataDog/learning-center/tree/main/courses/introduction-to-monitoring-aws)).
+
+Set `TECHSTORIES_URL` to the same HTTPS URL as `NEXTAUTH_URL` — the public lab-host hostname through `service-proxy`, not the host app or ALB directly:
+
+| Do not use | Use instead |
+|------------|-------------|
+| `http://localhost:3000` | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+| `http://your-alb-dns-name.elb.amazonaws.com` (AWS labs) | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+
+Hybrid or AWS lab-host example:
+
+```bash
+export TECHSTORIES_PUBLIC_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
+
+docker run -d \
+  --name techstories-traffic-generator \
+  -e TECHSTORIES_URL="$TECHSTORIES_PUBLIC_URL" \
+  europe-west1-docker.pkg.dev/datadog-community/training-images-docker/techstories-aws-traffic-generator:1.0.0
+```
+
+When `NEXTAUTH_URL` is HTTPS, the app sets Secure session cookies. Traffic sent to plain HTTP (localhost or the ALB) will not authenticate correctly. Cypress and other headless clients follow the same rule.
+
+Lab author notes: [deploy/instruqt/README.md](deploy/instruqt/README.md#optional-traffic-generator).
 
 ### AWS + ALB (lab-host proxy)
 
@@ -175,7 +199,7 @@ environment:
   - EXTERNAL_HOST=your-alb-dns-name.elb.amazonaws.com
 ```
 
-CloudFormation must set `NEXTAUTH_URL` / `PublicAppUrl` to `https://lab-host.${_SANDBOX_ID}.instruqt.io`. The traffic generator must target that HTTPS URL, not the ALB directly.
+CloudFormation must set `NEXTAUTH_URL` / `PublicAppUrl` to `https://lab-host.${_SANDBOX_ID}.instruqt.io`. Point the optional traffic generator at that same URL — see [Optional traffic generator](#optional-traffic-generator).
 
 ECS Fargate + ALB uses the same TLS model; only the AWS stack differs.
 
@@ -206,6 +230,7 @@ Visit `https://localhost` (accept the self-signed certificate warning).
 | `EXTERNAL_HOST` | _(empty)_ | Host header for external mode |
 | `NEXTAUTH_URL` | `http://localhost:3000` | Must match public HTTPS URL in SSL labs |
 | `NEXT_PUBLIC_QUOTES_API_URL` | `http://localhost:3001` | Use `${NEXTAUTH_URL}/services/quotes` behind SSL |
+| `TECHSTORIES_URL` | _(n/a)_ | Optional traffic generator only: set to `https://lab-host.${_SANDBOX_ID}.instruqt.io` (same as `NEXTAUTH_URL`) |
 
 ### How do I run the tests?
 

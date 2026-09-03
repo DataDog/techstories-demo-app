@@ -130,7 +130,7 @@ The application uses Docker Compose for supporting services:
 
 Start services: `docker compose up -d`
 
-Hybrid model: compose runs supporting services only; run `npm run dev` on the host. See [README.md — Enable SSL/TLS](README.md#enable-ssltls) for Instruqt HTTPS setup.
+Hybrid model: compose runs supporting services only; run `npm run dev` on the host. See [README.md — Enable SSL/TLS](README.md#enable-ssltls) for Instruqt HTTPS setup. Optional background traffic uses the external `techstories-aws-traffic-generator` image with `TECHSTORIES_URL=https://lab-host.${_SANDBOX_ID}.instruqt.io` (documented in [deploy/instruqt/README.md](deploy/instruqt/README.md#optional-traffic-generator)).
 
 ## Environment Variables
 

@@ -60,6 +60,16 @@ service-proxy:
 
 CloudFormation must set `NEXTAUTH_URL` to the learner-facing HTTPS URL (`https://lab-host.${_SANDBOX_ID}.instruqt.io`), not the ALB URL.
 
+## Optional traffic generator
+
+This repo does not ship synthetic traffic tooling. Learning-center labs may run `techstories-aws-traffic-generator` with:
+
+```bash
+-e TECHSTORIES_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
+```
+
+Use that HTTPS lab-host URL in hybrid and external (ALB) modes — not `http://localhost:3000` or the ALB HTTP endpoint. See [deploy/instruqt/README.md](../../deploy/instruqt/README.md#optional-traffic-generator).
+
 ## Local testing
 
 Generate a self-signed cert:

@@ -40,6 +40,28 @@ Instruqt tab:
 
 Use the short hostname `lab-host`, not `$HOSTNAME` (which resolves to the internal k8s FQDN).
 
+## Optional traffic generator
+
+TechStories does not include a traffic generator in this repo. Learning-center AWS courses start the optional image `techstories-aws-traffic-generator` from `setup-lab-host` (for example [introduction-to-monitoring-aws](https://github.com/DataDog/learning-center/blob/main/courses/introduction-to-monitoring-aws/labs/03-aws-metrics-and-logs/setup-lab-host)).
+
+Pass the **HTTPS lab-host URL** as `TECHSTORIES_URL`, matching `NEXTAUTH_URL` / `TECHSTORIES_PUBLIC_URL`:
+
+```bash
+export TECHSTORIES_PUBLIC_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
+
+docker run -d \
+  --name techstories-traffic-generator \
+  -e TECHSTORIES_URL="$TECHSTORIES_PUBLIC_URL" \
+  europe-west1-docker.pkg.dev/datadog-community/training-images-docker/techstories-aws-traffic-generator:1.0.0
+```
+
+| Scenario | Wrong `TECHSTORIES_URL` | Correct `TECHSTORIES_URL` |
+|----------|-------------------------|----------------------------|
+| Hybrid (app on lab-host) | `http://localhost:3000` | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+| AWS + ALB | `http://${ALB_DNS}` | `https://lab-host.${_SANDBOX_ID}.instruqt.io` |
+
+Traffic must enter through `service-proxy` on lab-host so TLS and NextAuth Secure cookies match what learners see in the Instruqt tab.
+
 ## AWS + ALB (intro-to-monitoring-aws)
 
 TechStories runs in AWS (HTTP behind ALB). TLS terminates on lab-host via `service-proxy` in external mode.
@@ -54,7 +76,7 @@ export TECHSTORIES_PUBLIC_URL="https://lab-host.${_SANDBOX_ID}.instruqt.io"
 
 CloudFormation: pass `PublicAppUrl=${TECHSTORIES_PUBLIC_URL}` so `NEXTAUTH_URL` on EC2/ECS matches the HTTPS tab URL.
 
-Traffic generators and headless clients must use `$TECHSTORIES_PUBLIC_URL`, not the ALB HTTP URL, or authenticated flows fail (Secure cookies).
+For background traffic, start `techstories-aws-traffic-generator` with `TECHSTORIES_URL=$TECHSTORIES_PUBLIC_URL` — see [Optional traffic generator](#optional-traffic-generator).
 
 ## References
 
