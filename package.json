@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "next build --webpack",
-    "dev": "NODE_OPTIONS='--require dd-trace/init' next dev -H 0.0.0.0 --webpack",
+    "dev": "NODE_OPTIONS='--require dd-trace/init' next dev --webpack",
     "postinstall": "prisma generate",
     "lint": "tsc --noEmit -p tsconfig.json",
     "start": "NODE_OPTIONS='--require dd-trace/init' next start",
