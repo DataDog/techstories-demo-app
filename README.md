@@ -35,7 +35,7 @@ TechStories is a simple web application that allows users to post stories about 
 
 ### Authentication Implementation
 
-The application uses NextAuth.js with a Credentials provider for authentication:
+The application uses Auth.js v5 (NextAuth 5) with a Credentials provider for authentication:
 - Password-based authentication with bcrypt hashing
 - JWT session strategy with 2-day expiration
 - Secure password validation and error handling
@@ -72,6 +72,8 @@ TechStories is designed to be run directly on the host machine, as it was primar
 Use the following steps to run TechStories:
 
 1. Clone this repository to your local machine.
+
+1. Use Node.js 26 (`nvm use` reads `.nvmrc`).
 
 1. Set your environment variables by copying the `.env.example` file to `.env` and filling in the values.
 

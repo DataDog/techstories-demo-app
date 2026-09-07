@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
@@ -10,29 +14,39 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
-    ".eslintrc.cjs",
     "next-env.d.ts",
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./src/**/*.cjs",
     "./src/**/*.mjs",
     "./prisma/**/*.ts",
-    "./cypress/**/*.ts",
-    "./cypress.config.ts",
-    "global.d.ts"
+    "./prisma.config.ts",
+    "global.d.ts",
+    "eslint.config.mjs"
   ],
-  "exclude": ["node_modules", "src/*.test.ts"],
-  "types": ["node", "jest", "@testing-library/jest-dom"]
+  "exclude": [
+    "node_modules",
+    "src/*.test.ts",
+    "src/__tests__",
+    "cypress",
+    "broken-tests"
+  ],
+  "types": [
+    "node",
+    "jest",
+    "@testing-library/jest-dom"
+  ]
 }

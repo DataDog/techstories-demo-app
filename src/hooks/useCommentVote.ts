@@ -6,19 +6,19 @@ export const useCommentVote = (commentId: string) => {
   const canVote = !!sessionData;
 
   const { data: hasVoted } = api.comment.hasVoted.useQuery({ commentId });
-  const context = api.useContext();
+  const utils = api.useUtils();
 
   const addVote = api.comment.addVote.useMutation({
     async onSuccess() {
-      await context.comment.getCommentsByPostId.invalidate();
-      await context.comment.hasVoted.invalidate({ commentId });
+      await utils.comment.getCommentsByPostId.invalidate();
+      await utils.comment.hasVoted.invalidate({ commentId });
     },
   });
 
   const removeVote = api.comment.removeVote.useMutation({
     async onSuccess() {
-      await context.comment.getCommentsByPostId.invalidate();
-      await context.comment.hasVoted.invalidate({ commentId });
+      await utils.comment.getCommentsByPostId.invalidate();
+      await utils.comment.hasVoted.invalidate({ commentId });
     },
   });
 

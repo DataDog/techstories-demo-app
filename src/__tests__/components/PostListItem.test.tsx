@@ -1,8 +1,11 @@
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/dom";
 import { PostListItem } from "~/components/PostListItem";
 import { usePostVote } from "~/hooks/usePostVote";
 
-jest.mock("../../hooks/usePostVote");
+jest.mock("~/hooks/usePostVote", () => ({
+  usePostVote: jest.fn(),
+}));
 
 const postMock = {
   id: "1",

@@ -13,12 +13,12 @@ interface CommentFormProps {
 
 export const CommentForm: React.FC<CommentFormProps> = ({ postId, slug }) => {
   const [commentBody, setCommentBody] = useState<string | undefined>("");
-  const context = api.useContext();
+  const utils = api.useUtils();
   const mutation = api.comment.createComment.useMutation({
     async onSuccess() {
       await Promise.all([
-        context.post.getPostBySlug.invalidate({ slug }),
-        context.comment.getCommentsByPostId.invalidate({ postId }),
+        utils.post.getPostBySlug.invalidate({ slug }),
+        utils.comment.getCommentsByPostId.invalidate({ postId }),
       ]);
     },
   });
@@ -51,7 +51,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({ postId, slug }) => {
         <button
           className="w-full rounded-md border border-gray-300 p-2"
           type="submit"
-          disabled={mutation.isLoading}
+          disabled={mutation.isPending}
         >
           Submit
         </button>

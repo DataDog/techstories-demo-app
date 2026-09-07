@@ -8,7 +8,7 @@ const Home: NextPage = () => {
 
   return (
     <MainLayout pageTitle="Home" description="Home page">
-      <p className="w-100 bg-neutral-200 p-4 text-center">
+      <p className="w-full bg-neutral-200 p-4 text-center">
         Welcome to TechStories, new social network for friends write their own
         stories about technology. Log in to create, comment, and vote on
         stories. This site is in private beta, so no new signups are being

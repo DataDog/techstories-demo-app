@@ -6,29 +6,23 @@ await import("./src/env.mjs");
 import removeImports from "next-remove-imports";
 
 /** @type {function(import("next").NextConfig): import("next").NextConfig}} */
-const removeImportsFun = removeImports({
-  // test: /node_modules([\s\S]*?)\.(tsx|ts|js|mjs|jsx)$/,
-  // matchImports: "\\.(less|css|scss|sass|styl)$"
-});
+const removeImportsFun = removeImports({});
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
   productionBrowserSourceMaps: true,
-  webpack(config, options) {
+  transpilePackages: ["next-auth"],
+  webpack(config) {
+    config.externals.push(
+      "@datadog/native-metrics",
+      "@datadog/pprof",
+      "@datadog/native-appsec",
+      "@datadog/native-iast-taint-tracking",
+      "@datadog/wasm-js-rewriter",
+    );
     return config;
   },
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
+
 export default removeImportsFun(config);

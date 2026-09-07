@@ -2,12 +2,13 @@
  * @jest-environment node
  */
 
-import { PrismaClient, VotesOnPosts, Prisma } from "@prisma/client";
+import { VotesOnPosts, Prisma } from "~/generated/prisma/client";
+import { createTestPrismaClient } from "~/__tests__/helpers/test-db";
 
 // Flaky integration tests for Post and Comment models
 
 describe("Post and Comment Integration (Flaky)", () => {
-  const prisma = new PrismaClient();
+  const prisma = createTestPrismaClient();
   const testUserEmail = "flakyuser@datadog-demo.com";
   let testUserId: string;
   let testPostId: string;

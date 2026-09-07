@@ -18,7 +18,7 @@ export const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
           {post._count.votes}
         </div>
       </div>
-      <div className="postitem__content-container">
+      <div className="postitem__content-container min-w-0 flex-1">
         <div className="postitem__title">
           <Link
             href={`/posts/${post.slug}`}

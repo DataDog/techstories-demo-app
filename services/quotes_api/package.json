@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "license": "MIT",
+  "engines": {
+    "node": ">=26.0.0"
+  },
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
-    "dd-trace": "^5.85.0",
-    "express": "^4.18.3"
+    "dd-trace": "5.124.0",
+    "express": "^4.21.2"
   }
 }

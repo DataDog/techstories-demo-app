@@ -1,4 +1,5 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { fireEvent, waitFor } from "@testing-library/dom";
 import { CommentListItem } from "~/components/CommentListItem";
 import { useCommentVote } from "~/hooks/useCommentVote";
 
@@ -10,7 +11,7 @@ jest.mock("next-auth/react", () => ({
 }));
 
 // Mock the custom hooks
-jest.mock("../../hooks/useCommentVote");
+jest.mock("~/hooks/useCommentVote");
 
 jest.mock("remark-gfm", () => jest.fn());
 jest.mock("react-markdown", () => ({ children }) => <div>{children}</div>);

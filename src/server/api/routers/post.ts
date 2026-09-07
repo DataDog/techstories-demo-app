@@ -5,12 +5,13 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { publicUserSelect } from "~/server/api/publicUserSelect";
 
 export const postRouter = createTRPCRouter({
   getPosts: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.post.findMany({
       include: {
-        author: true,
+        author: { select: publicUserSelect },
         _count: {
           select: {
             comments: true,
@@ -34,10 +35,10 @@ export const postRouter = createTRPCRouter({
         include: {
           comments: {
             include: {
-              author: true,
+              author: { select: publicUserSelect },
             },
           },
-          author: true,
+          author: { select: publicUserSelect },
           _count: {
             select: {
               comments: true,

@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { screen } from "@testing-library/dom";
 import { useSession } from "next-auth/react";
 import { usePostVote } from "~/hooks/usePostVote";
 import SinglePost from "~/components/SinglePost";
@@ -15,21 +16,21 @@ jest.mock("next-auth/react", () => ({
 jest.mock("remark-gfm", () => jest.fn());
 jest.mock("react-markdown", () => ({ children }) => <div>{children}</div>);
 
-jest.mock("../../hooks/usePostVote", () => ({
+jest.mock("~/hooks/usePostVote", () => ({
   usePostVote: jest.fn(),
 }));
 
-jest.mock("../../components/CommentForm", () => ({
+jest.mock("~/components/CommentForm", () => ({
   __esModule: true,
   default: jest.fn(() => null),
 }));
 
-jest.mock("../../components/CommentList", () => ({
+jest.mock("~/components/CommentList", () => ({
   __esModule: true,
   default: jest.fn(() => null),
 }));
 
-jest.mock("../../components/VoteButton", () => ({
+jest.mock("~/components/VoteButton", () => ({
   __esModule: true,
   default: jest.fn(() => null),
 }));
@@ -84,7 +85,7 @@ describe("SinglePost", () => {
     // Instead, we check that it's called with the correct props.
     expect(CommentForm).toHaveBeenCalledWith(
       { postId: mockPost.id, slug: mockPost.slug },
-      {}
+      undefined,
     );
   });
 });

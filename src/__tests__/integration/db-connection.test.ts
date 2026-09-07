@@ -2,11 +2,11 @@
  * @jest-environment node
  */
 
-import { PrismaClient } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "~/generated/prisma/client";
+import { createTestPrismaClient } from "~/__tests__/helpers/test-db";
 
 describe("Database Integration", () => {
-  const prisma = new PrismaClient();
+  const prisma = createTestPrismaClient();
   const testEmail = "testuser@datadog-demo.com";
 
   // Helper function to generate a random email

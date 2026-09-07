@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export const Header: React.FC = () => {
   return (
-    <header className="mx-auto flex w-full items-center justify-center">
-      <div className="container flex flex-col items-center justify-between  py-6 md:flex-row">
+    <header className="flex w-full items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-between py-6 md:flex-row">
         <Link
           href="/"
           className="border-2 border-black bg-black px-2 py-1 text-6xl  text-white "
