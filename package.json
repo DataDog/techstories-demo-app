@@ -94,7 +94,6 @@
   },
   "overrides": {
     "@datadog/datadog-ci": {
-      "axios": "^1.18.1",
       "fast-xml-parser": "^4.5.7",
       "simple-git": "^3.36.0",
       "form-data": "^4.0.6"
@@ -102,26 +101,8 @@
     "@aws-sdk/core": {
       "fast-xml-parser": "^4.5.7"
     },
-    "jest-environment-jsdom": {
-      "form-data": "^4.0.6"
-    },
-    "babel-jest": {
-      "minimatch": "^3.1.5"
-    },
-    "eslint": {
-      "minimatch": "^3.1.5"
-    },
-    "eslint-config-next": {
-      "minimatch": "^3.1.5"
-    },
-    "jest": {
-      "minimatch": "^3.1.5"
-    },
     "ts-jest": {
       "minimatch": "^3.1.5"
-    },
-    "tinyglobby": {
-      "picomatch": "^4.0.5"
     }
   }
 }
